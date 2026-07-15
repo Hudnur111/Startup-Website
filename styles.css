@@ -304,6 +304,20 @@ section{padding:76px 0;}
 .form-field textarea{resize:vertical; min-height:120px;}
 .form-note{font-size:12.5px; color:var(--ink-faint); margin-top:-4px;}
 
+/* Kontaktseite — Wahl: Erstgespräch oder Screening-Formular */
+.choice-cards{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+@media (max-width:700px){ .choice-cards{grid-template-columns:1fr;} }
+.choice-card{
+  display:block; background:var(--surface); border:1px solid var(--line); border-radius:6px;
+  padding:26px 24px; text-decoration:none; transition:transform .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.choice-card svg{width:24px; height:24px; color:var(--brass); margin-bottom:12px;}
+.choice-card h3{font-size:17px; font-family:var(--serif); color:var(--ink);}
+.choice-card p{font-size:13.5px; margin-top:8px;}
+.choice-card-tag{display:inline-block; margin-top:14px; font-family:var(--mono); font-size:12px; color:var(--brass);}
+.choice-card.is-active{border-color:var(--brass); box-shadow:var(--shadow);}
+a.choice-card:hover{transform:translateY(-3px); border-color:var(--brass); box-shadow:var(--shadow);}
+
 /* Kontaktformular — Format-Auswahl (Online/Präsenz) */
 .checkbox-group{display:flex; gap:12px; flex-wrap:wrap;}
 .checkbox-chip{
@@ -348,6 +362,36 @@ section{padding:76px 0;}
   cursor:pointer; width:100%; text-align:center; transition:border-color .15s, background .15s;
 }
 .btn-add-slot:hover{border-color:var(--brass); background:color-mix(in srgb, var(--brass) 6%, transparent);}
+
+/* ---------- 16. Screening-Formular (eigene Seite) ---------- */
+.form-step{display:grid; grid-template-columns:52px 1fr; gap:18px; padding:32px 0; border-top:1px solid var(--line);}
+.form-step:first-child{border-top:none; padding-top:0;}
+.form-step-num{font-family:var(--serif); font-size:26px; color:var(--brass); opacity:.5; line-height:1.1; margin:0;}
+.form-step-title{font-family:var(--serif); font-size:19px; margin:0 0 4px; color:var(--ink);}
+.form-step-desc{font-size:13.5px; color:var(--ink-faint); margin:0 0 18px;}
+@media (max-width:560px){ .form-step{grid-template-columns:1fr; gap:6px;} .form-step-num{font-size:18px; opacity:.7;} }
+
+/* Datei-Upload mit Drag & Drop */
+.file-drop{
+  position:relative; border:1.5px dashed var(--line-strong); border-radius:6px;
+  padding:34px 20px; text-align:center; transition:border-color .18s, background .18s;
+}
+.file-drop.is-dragover, .file-drop:hover{ border-color:var(--brass); background:color-mix(in srgb, var(--brass) 6%, transparent); }
+.file-drop svg{width:26px; height:26px; color:var(--brass); margin:0 auto 10px;}
+.file-drop p{font-size:14px; color:var(--ink-soft);}
+.file-drop .file-hint{font-size:12px; color:var(--ink-faint); margin-top:4px;}
+.file-drop input[type="file"]{position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer;}
+.file-list{display:flex; flex-direction:column; gap:8px; margin-top:14px;}
+.file-list-item{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:9px 14px; font-size:13px; color:var(--ink-soft);
+}
+.file-list-item button{
+  background:none; border:none; color:var(--ink-faint); font-size:18px; line-height:1;
+  cursor:pointer; padding:0 2px; transition:color .15s;
+}
+.file-list-item button:hover{color:var(--brass);}
 
 /* ---------- 13. Abschluss-CTA ---------- */
 .cta-band{

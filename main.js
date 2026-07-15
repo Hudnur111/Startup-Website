@@ -68,13 +68,18 @@ document.addEventListener('DOMContentLoaded', function(){
     form.addEventListener('submit', function(e){
       e.preventDefault();
       var status = document.getElementById(statusId);
-      fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encodeFormData(form)
-      }).then(function(){
+      var hasFile = !!form.querySelector('input[type="file"]');
+      /* Bei Datei-Uploads muss FormData unverändert als Body gehen — der Browser
+         setzt dann automatisch den richtigen multipart/form-data-Header inkl.
+         Boundary. Ein manuell gesetzter Content-Type-Header würde das kaputt machen. */
+      var fetchOptions = hasFile
+        ? { method: 'POST', body: new FormData(form) }
+        : { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: encodeFormData(form) };
+      fetch('/', fetchOptions).then(function(){
         status.textContent = successMessage;
         form.reset();
+        var fileList = form.querySelector('.file-list');
+        if (fileList) { fileList.innerHTML = ''; }
       }).catch(function(){
         status.textContent = 'Danke! Der Versand klappt erst nach dem Netlify-Deploy — lokal kann das Formular nicht senden.';
       });
@@ -83,33 +88,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   wireNetlifyForm('newsletter-form', 'newsletter-status', 'Danke — Sie erhalten künftig Updates zu neuen Projekten.');
   wireNetlifyForm('contact-form', 'contact-form-status', 'Danke für Ihre Nachricht — wir melden uns innerhalb eines Werktags.');
-
-  /* ---------- Kontaktformular: Erstgespräch vs. Screening-Formular ---------- */
-  var modeCall = document.getElementById('mode-call');
-  var modeScreening = document.getElementById('mode-screening');
-  var sectionTermine = document.getElementById('section-termine');
-  var sectionScreening = document.getElementById('section-screening');
-
-  function applyContactMode(){
-    if (!modeCall || !modeScreening || !sectionTermine || !sectionScreening) return;
-    var screeningActive = modeScreening.checked;
-    sectionTermine.classList.toggle('hidden-section', screeningActive);
-    sectionScreening.classList.toggle('hidden-section', !screeningActive);
-    sectionTermine.querySelectorAll('input[type="date"], input[type="time"]').forEach(function(field){
-      if (screeningActive) {
-        if (field.required) { field.dataset.wasRequired = 'true'; }
-        field.required = false;
-      } else if (field.dataset.wasRequired === 'true') {
-        field.required = true;
-      }
-    });
-  }
-
-  if (modeCall && modeScreening) {
-    modeCall.addEventListener('change', applyContactMode);
-    modeScreening.addEventListener('change', applyContactMode);
-    applyContactMode();
-  }
+  wireNetlifyForm('screening-form', 'screening-form-status', 'Danke für Ihr ausführliches Screening — wir melden uns innerhalb eines Werktags schriftlich.');
 
   /* ---------- Kontaktformular: weiteren Terminvorschlag hinzufügen ---------- */
   var addSlotBtn = document.getElementById('add-slot');
@@ -127,6 +106,62 @@ document.addEventListener('DOMContentLoaded', function(){
       setMinDateOnInputs(row);
     });
   }
+
+  /* ---------- Datei-Upload mit Drag & Drop (Screening-Formular) ---------- */
+  function formatFileSize(bytes){
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  function wireFileUpload(dropId, inputId, listId){
+    var drop = document.getElementById(dropId);
+    var input = document.getElementById(inputId);
+    var list = document.getElementById(listId);
+    if (!drop || !input || !list || typeof DataTransfer === 'undefined') return;
+
+    var files = new DataTransfer();
+
+    function render(){
+      list.innerHTML = '';
+      Array.prototype.forEach.call(files.files, function(file, idx){
+        var item = document.createElement('div');
+        item.className = 'file-list-item';
+        var label = document.createElement('span');
+        label.textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.textContent = '×';
+        removeBtn.setAttribute('aria-label', 'Datei entfernen: ' + file.name);
+        removeBtn.addEventListener('click', function(){
+          files.items.remove(idx);
+          input.files = files.files;
+          render();
+        });
+        item.appendChild(label);
+        item.appendChild(removeBtn);
+        list.appendChild(item);
+      });
+    }
+
+    function addFiles(fileListToAdd){
+      Array.prototype.forEach.call(fileListToAdd, function(f){ files.items.add(f); });
+      input.files = files.files;
+      render();
+    }
+
+    input.addEventListener('change', function(){ addFiles(input.files); });
+
+    ['dragenter', 'dragover'].forEach(function(evt){
+      drop.addEventListener(evt, function(e){ e.preventDefault(); drop.classList.add('is-dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(function(evt){
+      drop.addEventListener(evt, function(e){ e.preventDefault(); drop.classList.remove('is-dragover'); });
+    });
+    drop.addEventListener('drop', function(e){ addFiles(e.dataTransfer.files); });
+  }
+
+  wireFileUpload('file-drop', 'cf-anhaenge', 'file-list');
 
   /* ---------- Datumsfelder: kein Datum in der Vergangenheit wählbar ---------- */
   function setMinDateOnInputs(scope){
@@ -149,7 +184,9 @@ document.addEventListener('DOMContentLoaded', function(){
       });
     }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
     revealEls.forEach(function(el, i){
-      el.style.setProperty('--i', i % 8);
+      if (!el.style.getPropertyValue('--i')) {
+        el.style.setProperty('--i', i % 8);
+      }
       observer.observe(el);
     });
   } else {

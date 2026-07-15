@@ -304,6 +304,51 @@ section{padding:76px 0;}
 .form-field textarea{resize:vertical; min-height:120px;}
 .form-note{font-size:12.5px; color:var(--ink-faint); margin-top:-4px;}
 
+/* Kontaktformular — Format-Auswahl (Online/Präsenz) */
+.checkbox-group{display:flex; gap:12px; flex-wrap:wrap;}
+.checkbox-chip{
+  display:flex; align-items:center; gap:8px; font-size:14px; color:var(--ink-soft); cursor:pointer;
+  padding:10px 16px; border:1px solid var(--line-strong); border-radius:var(--radius); transition:border-color .15s, color .15s;
+}
+.checkbox-chip:has(input:checked){ border-color:var(--brass); color:var(--brass); }
+.checkbox-chip input{ accent-color:var(--brass); width:16px; height:16px; }
+
+/* Kontaktformular — Abschnitte */
+.form-section{border-top:1px solid var(--line); padding-top:24px; margin-top:4px;}
+.form-section-title{font-family:var(--serif); font-size:17px; color:var(--ink);}
+.form-hint{font-size:13px; color:var(--ink-faint); margin-top:4px; margin-bottom:16px;}
+.hidden-section{display:none;}
+
+/* Kontaktformular — Erstgespräch vs. Screening Umschalter */
+.mode-toggle{display:flex; gap:12px; flex-wrap:wrap;}
+.mode-toggle input{position:absolute; opacity:0; width:1px; height:1px; pointer-events:none;}
+.mode-toggle label{
+  display:flex; align-items:center; gap:8px; cursor:pointer; padding:12px 18px;
+  border:1px solid var(--line-strong); border-radius:var(--radius); font-size:14px; font-weight:600;
+  color:var(--ink-soft); transition:border-color .15s, color .15s, background .15s;
+}
+.mode-toggle input:checked + label{
+  border-color:var(--brass); color:var(--brass);
+  background:color-mix(in srgb, var(--brass) 10%, transparent);
+}
+.mode-toggle input:focus-visible + label{ outline:2px solid var(--brass); outline-offset:2px; }
+
+/* Kontaktformular — Terminvorschläge */
+.slot-row{display:grid; grid-template-columns:24px 1fr 1fr; gap:10px; align-items:center; margin-bottom:10px;}
+.slot-row .slot-index{font-family:var(--mono); font-size:12px; color:var(--ink-faint);}
+.slot-row input{
+  background:var(--surface); border:1px solid var(--line-strong); border-radius:var(--radius);
+  padding:11px 12px; font-family:var(--sans); font-size:14px; color:var(--ink); outline:none; transition:border-color .15s;
+}
+.slot-row input:focus{border-color:var(--brass);}
+@media (max-width:520px){ .slot-row{grid-template-columns:20px 1fr; row-gap:8px;} .slot-row input[type="time"]{grid-column:2;} }
+.btn-add-slot{
+  font-family:var(--mono); font-size:13px; color:var(--brass); background:none;
+  border:1px dashed var(--line-strong); border-radius:var(--radius); padding:11px 16px;
+  cursor:pointer; width:100%; text-align:center; transition:border-color .15s, background .15s;
+}
+.btn-add-slot:hover{border-color:var(--brass); background:color-mix(in srgb, var(--brass) 6%, transparent);}
+
 /* ---------- 13. Abschluss-CTA ---------- */
 .cta-band{
   background:var(--ink); color:var(--bg); border-radius:8px; padding:56px 48px;

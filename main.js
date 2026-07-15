@@ -84,6 +84,59 @@ document.addEventListener('DOMContentLoaded', function(){
   wireNetlifyForm('newsletter-form', 'newsletter-status', 'Danke — Sie erhalten künftig Updates zu neuen Projekten.');
   wireNetlifyForm('contact-form', 'contact-form-status', 'Danke für Ihre Nachricht — wir melden uns innerhalb eines Werktags.');
 
+  /* ---------- Kontaktformular: Erstgespräch vs. Screening-Formular ---------- */
+  var modeCall = document.getElementById('mode-call');
+  var modeScreening = document.getElementById('mode-screening');
+  var sectionTermine = document.getElementById('section-termine');
+  var sectionScreening = document.getElementById('section-screening');
+
+  function applyContactMode(){
+    if (!modeCall || !modeScreening || !sectionTermine || !sectionScreening) return;
+    var screeningActive = modeScreening.checked;
+    sectionTermine.classList.toggle('hidden-section', screeningActive);
+    sectionScreening.classList.toggle('hidden-section', !screeningActive);
+    sectionTermine.querySelectorAll('input[type="date"], input[type="time"]').forEach(function(field){
+      if (screeningActive) {
+        if (field.required) { field.dataset.wasRequired = 'true'; }
+        field.required = false;
+      } else if (field.dataset.wasRequired === 'true') {
+        field.required = true;
+      }
+    });
+  }
+
+  if (modeCall && modeScreening) {
+    modeCall.addEventListener('change', applyContactMode);
+    modeScreening.addEventListener('change', applyContactMode);
+    applyContactMode();
+  }
+
+  /* ---------- Kontaktformular: weiteren Terminvorschlag hinzufügen ---------- */
+  var addSlotBtn = document.getElementById('add-slot');
+  var slotList = document.getElementById('slot-list');
+  if (addSlotBtn && slotList) {
+    addSlotBtn.addEventListener('click', function(){
+      var nextIndex = slotList.querySelectorAll('.slot-row').length + 1;
+      var row = document.createElement('div');
+      row.className = 'slot-row';
+      row.innerHTML =
+        '<span class="slot-index">' + nextIndex + '</span>' +
+        '<input type="date" name="termin_' + nextIndex + '_datum" aria-label="Terminvorschlag ' + nextIndex + ' – Datum">' +
+        '<input type="time" name="termin_' + nextIndex + '_uhrzeit" aria-label="Terminvorschlag ' + nextIndex + ' – Uhrzeit">';
+      slotList.appendChild(row);
+      setMinDateOnInputs(row);
+    });
+  }
+
+  /* ---------- Datumsfelder: kein Datum in der Vergangenheit wählbar ---------- */
+  function setMinDateOnInputs(scope){
+    var today = new Date().toISOString().slice(0, 10);
+    (scope || document).querySelectorAll('input[type="date"]').forEach(function(el){
+      el.min = today;
+    });
+  }
+  setMinDateOnInputs(document);
+
   /* ---------- Scroll-Einblend-Animation ---------- */
   var revealEls = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && revealEls.length) {

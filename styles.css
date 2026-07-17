@@ -363,7 +363,38 @@ a.choice-card:hover{transform:translateY(-3px); border-color:var(--brass); box-s
 }
 .btn-add-slot:hover{border-color:var(--brass); background:color-mix(in srgb, var(--brass) 6%, transparent);}
 
-/* ---------- 16. Screening-Formular (eigene Seite) ---------- */
+/* ---------- 16. Designs — Stilrichtungen-Kacheln ---------- */
+.design-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:24px;}
+@media (max-width:760px){ .design-grid{grid-template-columns:1fr; max-width:520px; margin:0 auto;} }
+.design-tile{
+  background:var(--surface); border:1px solid var(--line); border-radius:6px; overflow:hidden;
+  box-shadow:var(--shadow); transition:transform .25s var(--ease), border-color .25s var(--ease), box-shadow .25s var(--ease);
+}
+.design-tile:hover{transform:translateY(-5px); border-color:var(--brass); box-shadow:0 20px 40px -20px color-mix(in srgb, var(--brass) 40%, transparent);}
+.design-tile-frame{aspect-ratio:16/10; border-bottom:1px solid var(--line); overflow:hidden;}
+.design-tile-frame svg{transition:transform .4s var(--ease);}
+.design-tile:hover .design-tile-frame svg{transform:scale(1.03);}
+.design-tile-body{padding:20px 22px 24px;}
+.design-tile-tag{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--brass);}
+.design-tile-title{font-family:var(--serif); font-size:19px; margin-top:8px; color:var(--ink);}
+.design-tile-desc{font-size:13.5px; margin-top:8px;}
+.design-tile-fit{font-size:12px; color:var(--ink-faint); margin-top:12px; font-family:var(--mono);}
+
+.recommend-box{
+  background:var(--surface); border:1px solid var(--line); border-radius:6px;
+  padding:32px 32px 28px; box-shadow:var(--shadow);
+}
+.recommend-list{list-style:none; padding:0; margin:20px 0 0; display:flex; flex-direction:column; gap:14px;}
+.recommend-list li{
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; font-size:14.5px; color:var(--ink-soft);
+  padding-top:14px; border-top:1px solid var(--line);
+}
+.recommend-list li:first-child{border-top:none; padding-top:0;}
+.recommend-list strong{font-family:var(--serif); font-size:16px; color:var(--ink); font-weight:600;}
+.recommend-list span{font-family:var(--mono); font-size:12px; color:var(--brass); margin-left:auto;}
+@media (max-width:560px){ .recommend-list span{margin-left:0;} }
+
+/* ---------- 17. Screening-Formular (eigene Seite) ---------- */
 .form-step{display:grid; grid-template-columns:52px 1fr; gap:18px; padding:32px 0; border-top:1px solid var(--line);}
 .form-step:first-child{border-top:none; padding-top:0;}
 .form-step-num{font-family:var(--serif); font-size:26px; color:var(--brass); opacity:.5; line-height:1.1; margin:0;}

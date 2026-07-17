@@ -126,7 +126,7 @@ header.site{
 .nav{display:flex; align-items:center; justify-content:space-between; padding:16px 0;}
 .brand{display:flex; align-items:center; gap:10px; font-family:var(--serif); font-size:20px; font-weight:600; letter-spacing:.02em; text-decoration:none;}
 .brand .mark{width:28px;height:28px;flex:none;}
-.navlinks{display:flex; gap:28px; font-size:14px; color:var(--ink-soft);}
+.navlinks{display:flex; gap:18px; font-size:13.5px; color:var(--ink-soft);}
 .navlinks a{text-decoration:none; transition:color .15s; position:relative; padding-bottom:3px;}
 .navlinks a::after{
   content:""; position:absolute; left:0; right:100%; bottom:0; height:1.5px; background:var(--brass);
@@ -147,7 +147,7 @@ header.site{
   width:40px; height:40px; align-items:center; justify-content:center; cursor:pointer; flex:none;
 }
 .nav-toggle svg{width:20px; height:20px; color:var(--ink);}
-@media (max-width:760px){
+@media (max-width:900px){
   .navlinks{
     position:fixed; inset:65px 0 0 0; z-index:39; background:var(--bg);
     flex-direction:column; align-items:flex-start; gap:0; padding:8px 24px 24px;
@@ -476,3 +476,71 @@ footer{border-top:1px solid var(--line); padding:56px 0 40px;}
 .legal-content p, .legal-content li{font-size:14px;}
 .legal-content ul{padding-left:20px; margin:6px 0;}
 .legal-content .placeholder{color:var(--brass); font-style:italic;}
+
+/* ---------- 18. FAQ (Akkordeon) ---------- */
+.faq-list{display:flex; flex-direction:column; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden; max-width:760px;}
+.faq-item{background:var(--surface);}
+.faq-item summary{
+  list-style:none; cursor:pointer; padding:20px 24px; display:flex; align-items:center; justify-content:space-between;
+  gap:16px; font-family:var(--serif); font-size:16.5px; color:var(--ink); font-weight:600;
+}
+.faq-item summary::-webkit-details-marker{display:none;}
+.faq-item summary .faq-icon{
+  flex:none; width:22px; height:22px; border:1px solid var(--line-strong); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; color:var(--brass); transition:transform .2s var(--ease), border-color .2s;
+  font-size:14px; font-family:var(--sans); line-height:1;
+}
+.faq-item[open] summary .faq-icon{transform:rotate(45deg); border-color:var(--brass);}
+.faq-item .faq-answer{padding:0 24px 22px; font-size:14.5px; color:var(--ink-soft); max-width:64ch;}
+.faq-item summary:hover{color:var(--brass);}
+
+/* ---------- 19. Preise / Pakete ---------- */
+.price-note{
+  background:var(--surface-2); border:1px solid var(--line); border-radius:6px;
+  padding:16px 20px; font-size:13.5px; color:var(--ink-soft); margin-bottom:32px; max-width:760px;
+}
+.price-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+@media (max-width:900px){ .price-grid{grid-template-columns:1fr; max-width:480px; margin:0 auto;} }
+.price-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:30px 26px;
+  display:flex; flex-direction:column; transition:transform .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.price-card:hover{transform:translateY(-4px); border-color:var(--brass); box-shadow:var(--shadow);}
+.price-card.is-featured{border-color:var(--brass); box-shadow:var(--shadow); position:relative;}
+.price-card-badge{
+  position:absolute; top:-12px; left:26px; background:var(--brass); color:#1B1204;
+  font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+  padding:4px 10px; border-radius:3px;
+}
+.price-card h3{font-family:var(--serif); font-size:19px;}
+.price-card .price-tag{margin-top:10px; font-family:var(--serif); font-size:30px; color:var(--brass);}
+.price-card .price-tag small{font-family:var(--sans); font-size:13px; color:var(--ink-faint); font-weight:400;}
+.price-card .price-desc{font-size:13.5px; margin-top:10px;}
+.price-card ul{list-style:none; padding:0; margin:20px 0 0; display:flex; flex-direction:column; gap:10px; flex:1;}
+.price-card li{display:flex; align-items:flex-start; gap:8px; font-size:13.5px; color:var(--ink-soft);}
+.price-card li svg{flex:none; width:15px; height:15px; margin-top:2px; color:var(--brass);}
+.price-card .btn{margin-top:24px; justify-content:center;}
+
+/* ---------- 20. Über uns (Piktogramme statt Fotos) ---------- */
+.value-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden;}
+@media (max-width:860px){ .value-grid{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:520px){ .value-grid{grid-template-columns:1fr;} }
+.value-card{background:var(--surface); padding:28px 22px;}
+.value-card svg{width:32px; height:32px; color:var(--brass);}
+.value-card h3{font-size:15.5px; margin-top:16px; font-family:var(--sans); font-weight:700;}
+.value-card p{font-size:13.5px; margin-top:8px;}
+
+.profile-card{
+  display:grid; grid-template-columns:120px 1fr; gap:28px; align-items:center;
+  background:var(--surface); border:1px solid var(--line); border-radius:6px; box-shadow:var(--shadow);
+  padding:28px; max-width:640px;
+}
+@media (max-width:560px){ .profile-card{grid-template-columns:1fr; text-align:center; justify-items:center;} }
+.profile-avatar{
+  width:120px; height:120px; border-radius:50%; background:var(--surface-2); border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center;
+}
+.profile-avatar svg{width:64px; height:64px; color:var(--brass);}
+.profile-card h3{font-family:var(--serif); font-size:19px;}
+.profile-card .profile-role{font-family:var(--mono); font-size:12px; color:var(--brass); letter-spacing:.04em; text-transform:uppercase; margin-top:4px;}
+.profile-card p.profile-bio{font-size:13.5px; margin-top:12px;}

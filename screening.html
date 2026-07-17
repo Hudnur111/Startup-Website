@@ -49,7 +49,7 @@
       <p class="breadcrumb"><a href="index.html">Start</a> / <a href="kontakt.html">Kontakt</a> / Screening-Formular</p>
       <p class="eyebrow">Kein Anruf nötig</p>
       <h1>Erzählen Sie uns schriftlich von Ihrem Projekt.</h1>
-      <p>Je genauer Ihre Angaben, desto passgenauer unser Vorschlag. Rechnen Sie mit rund 8–10 Minuten. Wir melden uns anschließend schriftlich innerhalb eines Werktags — ganz ohne Telefonat.</p>
+      <p>Meistens reicht ein Kreuz statt eines ganzen Satzes. Rechnen Sie mit rund 5–8 Minuten. Wir melden uns anschließend schriftlich innerhalb eines Werktags — ganz ohne Telefonat.</p>
     </div>
   </section>
 
@@ -126,18 +126,43 @@
           <p class="form-step-num">03</p>
           <div>
             <p class="form-step-title">Ziele &amp; Zielgruppe</p>
-            <p class="form-step-desc">Was soll die neue Website bewirken, und für wen ist sie gemacht?</p>
+            <p class="form-step-desc">Einfach ankreuzen, was zutrifft — Mehrfachauswahl möglich.</p>
             <div class="form-field">
-              <label for="sf-ziele">Was soll die Website vor allem können?</label>
-              <textarea id="sf-ziele" name="ziele" placeholder="z. B. mehr Anfragen, professionellerer Auftritt, Terminbuchung online …"></textarea>
+              <label>Was soll die Website vor allem können?</label>
+              <div class="checkbox-group">
+                <label class="checkbox-chip"><input type="checkbox" name="ziel_anfragen" value="Mehr Anfragen">Mehr Anfragen</label>
+                <label class="checkbox-chip"><input type="checkbox" name="ziel_auftritt" value="Professionellerer Auftritt">Professionellerer Auftritt</label>
+                <label class="checkbox-chip"><input type="checkbox" name="ziel_terminbuchung" value="Terminbuchung online">Terminbuchung online</label>
+                <label class="checkbox-chip"><input type="checkbox" name="ziel_mitglieder" value="Neue Mitglieder gewinnen">Neue Mitglieder gewinnen</label>
+                <label class="checkbox-chip"><input type="checkbox" name="ziel_spenden" value="Spenden sammeln">Spenden sammeln</label>
+                <label class="checkbox-chip"><input type="checkbox" name="ziel_google" value="Besser bei Google gefunden werden">Besser bei Google gefunden werden</label>
+                <label class="checkbox-chip"><input type="checkbox" name="ziel_infos" value="Infos für bestehende Kunden/Mitglieder">Infos für bestehende Kunden/Mitglieder</label>
+              </div>
+              <label for="sf-ziel-sonstiges" class="visually-hidden">Sonstiges Ziel</label>
+              <input id="sf-ziel-sonstiges" name="ziel_sonstiges" type="text" placeholder="Sonstiges (optional)" style="margin-top:10px;">
             </div>
-            <div class="form-field" style="margin-top:14px;">
-              <label for="sf-zielgruppe">Wer sind Ihre typischen Mitglieder, Kunden, Patienten oder Besucher?</label>
-              <textarea id="sf-zielgruppe" name="zielgruppe" placeholder="z. B. Privatpersonen, Familien, Unternehmen, lokal, überregional …"></textarea>
+            <div class="form-field" style="margin-top:18px;">
+              <label>Wer sind Ihre typischen Mitglieder, Kunden, Patienten oder Besucher?</label>
+              <div class="checkbox-group">
+                <label class="checkbox-chip"><input type="checkbox" name="zg_privat" value="Privatpersonen">Privatpersonen</label>
+                <label class="checkbox-chip"><input type="checkbox" name="zg_familien" value="Familien">Familien</label>
+                <label class="checkbox-chip"><input type="checkbox" name="zg_unternehmen" value="Unternehmen/Firmen">Unternehmen / Firmen</label>
+                <label class="checkbox-chip"><input type="checkbox" name="zg_mitglieder" value="Mitglieder/Verein">Mitglieder / Verein</label>
+                <label class="checkbox-chip"><input type="checkbox" name="zg_jugendliche" value="Jugendliche">Jugendliche</label>
+                <label class="checkbox-chip"><input type="checkbox" name="zg_senioren" value="Senioren">Senioren</label>
+                <label class="checkbox-chip"><input type="checkbox" name="zg_lokal" value="Lokal / in der Region">Lokal / in der Region</label>
+                <label class="checkbox-chip"><input type="checkbox" name="zg_ueberregional" value="Überregional">Überregional</label>
+              </div>
             </div>
-            <div class="form-field" style="margin-top:14px;">
-              <label for="sf-anlass">Gibt es einen bestimmten Anlass für die neue Website? (optional)</label>
-              <textarea id="sf-anlass" name="anlass" placeholder="z. B. Neugründung, Jubiläum, Relaunch, neuer Vorstand …"></textarea>
+            <div class="form-field" style="margin-top:18px;">
+              <label>Gibt es einen bestimmten Anlass für die neue Website? (optional)</label>
+              <div class="checkbox-group">
+                <label class="checkbox-chip"><input type="checkbox" name="anlass_neugruendung" value="Neugründung">Neugründung</label>
+                <label class="checkbox-chip"><input type="checkbox" name="anlass_jubilaeum" value="Jubiläum">Jubiläum</label>
+                <label class="checkbox-chip"><input type="checkbox" name="anlass_relaunch" value="Relaunch/Neugestaltung">Relaunch / Neugestaltung</label>
+                <label class="checkbox-chip"><input type="checkbox" name="anlass_neue_leitung" value="Neuer Vorstand/neue Leitung">Neuer Vorstand / neue Leitung</label>
+                <label class="checkbox-chip"><input type="checkbox" name="anlass_kein" value="Kein besonderer Anlass">Kein besonderer Anlass</label>
+              </div>
             </div>
           </div>
         </div>
@@ -180,12 +205,19 @@
               <label class="checkbox-chip"><input type="checkbox" name="stil_technisch" value="Technisch / präzise">Technisch / präzise</label>
             </div>
             <div class="form-field" style="margin-top:14px;">
-              <label for="sf-farbwelt">Farbwelt (falls schon Vorstellungen bestehen)</label>
-              <input id="sf-farbwelt" name="farbwelt" type="text" placeholder="z. B. Blau/Gold, dezente Erdtöne, Ihre Logofarben …">
+              <label>Farbwelt (falls schon Vorstellungen bestehen)</label>
+              <div class="checkbox-group">
+                <label class="checkbox-chip"><input type="checkbox" name="farbe_blaugold" value="Blau/Gold">Blau / Gold</label>
+                <label class="checkbox-chip"><input type="checkbox" name="farbe_erdton" value="Dezente Erdtöne">Dezente Erdtöne</label>
+                <label class="checkbox-chip"><input type="checkbox" name="farbe_bunt" value="Kräftig und bunt">Kräftig &amp; bunt</label>
+                <label class="checkbox-chip"><input type="checkbox" name="farbe_schwarzweiss" value="Schwarz/Weiß">Schwarz / Weiß</label>
+                <label class="checkbox-chip"><input type="checkbox" name="farbe_logo" value="Meine Logofarben verwenden">Meine Logofarben verwenden</label>
+                <label class="checkbox-chip"><input type="checkbox" name="farbe_offen" value="Keine Präferenz – Vorschlag gewünscht">Keine Präferenz — Vorschlag gewünscht</label>
+              </div>
             </div>
             <div class="form-field" style="margin-top:14px;">
-              <label for="sf-referenzseiten">Welche Websites gefallen Ihnen optisch? (Links reichen)</label>
-              <textarea id="sf-referenzseiten" name="referenzseiten"></textarea>
+              <label for="sf-referenzseiten">Gefällt Ihnen eine bestimmte Website optisch? (optional, ein Link reicht)</label>
+              <input id="sf-referenzseiten" name="referenzseiten" type="text" placeholder="z. B. www.beispiel.de">
             </div>
           </div>
         </div>

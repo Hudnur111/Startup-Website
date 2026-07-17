@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', function(){
   var navLinks = document.getElementById('navlinks');
 
   if (navToggle && navLinks && navIcon) {
+    /* Backdrop hinter dem Popup-Menü — schließt das Menü bei Tap daneben.
+       Wird per JS erzeugt, damit keine der HTML-Seiten angepasst werden muss. */
+    var navBackdrop = document.createElement('div');
+    navBackdrop.className = 'nav-backdrop';
+    navBackdrop.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(navBackdrop);
+
     var closeNav = function(){
       document.body.classList.remove('nav-open');
       navToggle.setAttribute('aria-expanded', 'false');
@@ -30,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function(){
     navLinks.addEventListener('click', function(e){
       if (e.target.tagName === 'A') { closeNav(); }
     });
+    navBackdrop.addEventListener('click', closeNav);
     window.addEventListener('keydown', function(e){
       if (e.key === 'Escape') { closeNav(); }
     });

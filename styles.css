@@ -102,7 +102,11 @@ p{line-height:1.6; color:var(--ink-soft); margin:0;}
 .skip-link:focus{left:0;}
 
 /* ---------- 3. Animationen ---------- */
-@keyframes page-fade-in{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+/* Nur Opacity, bewusst ohne transform: Jede transform auf <body> — auch eine, die
+   nach Animationsende bei translateY(0) "hängen bleibt" (animation-fill-mode:forwards) —
+   erzeugt einen eigenen Containing Block für alle position:fixed-Elemente der Seite.
+   Das mobile Menü würde dann relativ zur ganzen Seite statt zum Bildschirm positioniert. */
+@keyframes page-fade-in{ from{opacity:0;} to{opacity:1;} }
 
 .reveal{
   opacity:0;
@@ -148,22 +152,40 @@ header.site{
 }
 .nav-toggle svg{width:20px; height:20px; color:var(--ink);}
 @media (max-width:1060px){
+  /* Menü als Popup über einem fixierten Button unten rechts — auf iPhone/Tablet
+     ist die Kopfzeile schmal, ein reines Kopfzeilen-Menü wird dort leicht übersehen. */
+  header.site{
+    /* backdrop-filter erzeugt einen eigenen Containing Block — ohne das hier zu
+       entfernen, würde position:fixed bei Button/Popup relativ zum Header statt
+       zum Bildschirm berechnet und beide würden oben statt unten rechts landen. */
+    backdrop-filter:none;
+  }
+  .nav-toggle{
+    display:inline-flex; position:fixed; z-index:60;
+    right:20px; bottom:calc(20px + env(safe-area-inset-bottom));
+    background:var(--surface); box-shadow:var(--shadow);
+  }
+  .nav-backdrop{
+    position:fixed; inset:0; z-index:38; background:color-mix(in srgb, var(--ink) 32%, transparent);
+    opacity:0; pointer-events:none; transition:opacity .22s var(--ease);
+  }
+  body.nav-open .nav-backdrop{ opacity:1; pointer-events:auto; }
   .navlinks{
-    position:fixed; inset:73px 0 0 0; z-index:39; background:var(--bg);
-    flex-direction:column; align-items:flex-start; gap:0; padding:8px 24px 24px;
-    transform:translateY(-8px); opacity:0; pointer-events:none; transition:opacity .22s var(--ease), transform .22s var(--ease);
-    overflow-y:auto;
+    position:fixed; z-index:39; left:auto; top:auto;
+    right:20px; bottom:calc(20px + 44px + 14px + env(safe-area-inset-bottom));
+    width:min(260px, calc(100vw - 40px));
+    max-height:calc(100vh - 160px); overflow-y:auto;
+    background:var(--surface); border:1px solid var(--line-strong); border-radius:10px;
+    box-shadow:var(--shadow);
+    flex-direction:column; align-items:stretch; gap:0; padding:8px;
+    transform:scale(.94) translateY(8px); transform-origin:bottom right;
+    opacity:0; pointer-events:none; transition:opacity .18s var(--ease), transform .18s var(--ease);
   }
-  .navlinks a{width:100%; padding:16px 4px; border-bottom:1px solid var(--line); font-size:16px;}
+  .navlinks a{width:100%; padding:13px 12px; border-bottom:1px solid var(--line); font-size:15.5px; border-radius:6px;}
+  .navlinks a:last-child{border-bottom:none;}
   .navlinks a::after{display:none;}
-  body.nav-open .navlinks{opacity:1; transform:translateY(0); pointer-events:auto; display:flex;}
-  .nav-toggle{display:inline-flex;}
+  body.nav-open .navlinks{opacity:1; transform:scale(1) translateY(0); pointer-events:auto; display:flex;}
   .nav-cta{display:none;}
-  body.nav-open .nav-cta{
-    display:inline-flex; position:fixed; left:24px; right:24px;
-    bottom:calc(24px + env(safe-area-inset-bottom)); z-index:39;
-    justify-content:center; background:var(--brass); color:#1B1204; border-color:var(--brass);
-  }
   body.nav-open{overflow:hidden;}
 }
 

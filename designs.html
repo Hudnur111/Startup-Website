@@ -3,13 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <title>Design-Stile — PRÄZIS</title>
-<meta name="description" content="Vier Design-Stile im Vergleich: klassisch, modern, warm und technisch. Welcher Stil passt zu Ihrer Organisation — egal ob Kanzlei, Praxis, Verein oder Jugendorganisation?">
+<meta name="description" content="14 Design-Stile im Vergleich — für jede Art von Organisation. Klicken Sie auf einen Stil für eine Entwurfs-Vorschau.">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://praezis-portfolio.netlify.app/designs.html">
 <meta name="theme-color" content="#0E1420">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='4' fill='%230E1420'/%3E%3Cpath d='M6 20 L14 7 L22 20' stroke='%23A9782E' stroke-width='2' fill='none' stroke-linejoin='round' stroke-linecap='round'/%3E%3Cline x1='10' y1='14.5' x2='18' y2='14.5' stroke='%23A9782E' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
+<style>
+/* ── 4-column grid on wide screens ───────────────── */
+@media (min-width: 900px) {
+  .design-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ── Make tiles clickable ─────────────────────────── */
+.design-tile { cursor: pointer; }
+.design-tile-hint {
+  font-size: 11px; font-family: var(--mono);
+  color: var(--brass); margin-top: 10px; opacity: .72;
+  letter-spacing: .04em;
+}
+
+/* ── Design-Vorschau-Modal ───────────────────────── */
+.dmo-backdrop {
+  position: fixed; inset: 0; z-index: 900;
+  background: rgba(0,0,0,.72);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .22s ease;
+}
+.dmo-backdrop.is-open { opacity: 1; pointer-events: all; }
+.dmo-box {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  width: min(880px, 95vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  display: flex; flex-direction: column;
+  transform: translateY(18px) scale(.98);
+  transition: transform .22s ease;
+}
+.dmo-backdrop.is-open .dmo-box { transform: none; }
+.dmo-hd {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 16px;
+  padding: 22px 26px 16px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.dmo-meta { flex: 1; min-width: 0; }
+.dmo-tag {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--brass); margin: 0;
+}
+.dmo-name {
+  font-family: var(--serif); font-size: 22px;
+  margin: 6px 0 0; color: var(--ink);
+}
+.dmo-close {
+  background: none; border: 1px solid var(--line);
+  border-radius: 50%; width: 36px; height: 36px;
+  font-size: 22px; line-height: 1; cursor: pointer;
+  color: var(--ink); display: flex;
+  align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background .15s, border-color .15s;
+}
+.dmo-close:hover { background: var(--surface-2); border-color: var(--ink-faint); }
+.dmo-preview {
+  position: relative; overflow: hidden; flex-shrink: 0;
+  background: var(--surface-2);
+}
+.dmo-preview svg { display: block; width: 100%; height: auto; }
+.dmo-stamp {
+  position: absolute; top: 22px; right: -34px;
+  width: 140px; text-align: center;
+  background: var(--brass); color: #fff;
+  font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: .14em; padding: 6px 0;
+  transform: rotate(45deg);
+  pointer-events: none; z-index: 2;
+}
+.dmo-ft {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 16px;
+  padding: 18px 26px 24px;
+  border-top: 1px solid var(--line);
+  flex-shrink: 0; flex-wrap: wrap;
+}
+.dmo-ft p { font-size: 13.5px; color: var(--ink-faint); margin: 0; flex: 1; min-width: 200px; }
+</style>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
@@ -47,9 +131,9 @@
   <section class="page-hero">
     <div class="wrap reveal">
       <p class="breadcrumb"><a href="index.html">Start</a> / Designs</p>
-      <p class="eyebrow">Beispiele</p>
-      <h1>Vier Stile — welcher passt zu Ihnen?</h1>
-      <p>Jede Website gestalten wir individuell — für jede Art von Organisation. Diese vier Stile zeigen typische Ausgangspunkte, als Gesprächsgrundlage, nicht als feste Vorlage.</p>
+      <p class="eyebrow">Galerie</p>
+      <h1>14 Design-Ideen — welcher Stil spricht Sie an?</h1>
+      <p>Klicken Sie auf einen Stil, um eine Entwurfs-Vorschau zu sehen. Jede Website gestalten wir individuell — diese Stile sind Ausgangspunkte für unser gemeinsames Gespräch.</p>
     </div>
   </section>
 
@@ -57,9 +141,10 @@
     <div class="wrap">
       <div class="design-grid reveal-group">
 
-        <div class="design-tile reveal" style="--i:0">
+        <!-- Stil 01: Klassisch & seriös -->
+        <div class="design-tile reveal" style="--i:0" data-design="1" role="button" tabindex="0" aria-label="Stil 01 – Klassisch und seriös, Vorschau öffnen">
           <div class="design-tile-frame">
-            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Beispiel klassisch-seriöser Stil">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
               <rect width="400" height="250" fill="#F3EFE6"/>
               <rect x="0" y="0" width="400" height="30" fill="#FFFFFF"/>
               <circle cx="16" cy="15" r="3" fill="#D8CFC0"/><circle cx="28" cy="15" r="3" fill="#D8CFC0"/><circle cx="40" cy="15" r="3" fill="#D8CFC0"/>
@@ -67,10 +152,8 @@
               <line x1="150" y1="96" x2="250" y2="96" stroke="#A9782E" stroke-width="2"/>
               <rect x="60" y="130" width="110" height="68" fill="#FFFFFF" stroke="#D8CFC0"/>
               <rect x="230" y="130" width="110" height="68" fill="#FFFFFF" stroke="#D8CFC0"/>
-              <rect x="75" y="145" width="80" height="6" fill="#7B8298"/>
-              <rect x="75" y="158" width="60" height="6" fill="#7B8298"/>
-              <rect x="245" y="145" width="80" height="6" fill="#7B8298"/>
-              <rect x="245" y="158" width="60" height="6" fill="#7B8298"/>
+              <rect x="75" y="145" width="80" height="6" fill="#7B8298"/><rect x="75" y="158" width="60" height="6" fill="#7B8298"/>
+              <rect x="245" y="145" width="80" height="6" fill="#7B8298"/><rect x="245" y="158" width="60" height="6" fill="#7B8298"/>
               <line x1="60" y1="220" x2="340" y2="220" stroke="#D8CFC0"/>
             </svg>
           </div>
@@ -79,12 +162,14 @@
             <h3 class="design-tile-title">Klassisch &amp; seriös</h3>
             <p class="design-tile-desc">Ruhige Farben, klare Struktur. Wirkt traditionell, verlässlich und seriös.</p>
             <p class="design-tile-fit">Beliebt bei: Kanzleien, Notariaten, Praxen mit langer Geschichte</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
           </div>
         </div>
 
-        <div class="design-tile reveal" style="--i:1">
+        <!-- Stil 02: Modern & minimalistisch -->
+        <div class="design-tile reveal" style="--i:1" data-design="2" role="button" tabindex="0" aria-label="Stil 02 – Modern und minimalistisch, Vorschau öffnen">
           <div class="design-tile-frame">
-            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Beispiel modern-minimalistischer Stil">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
               <rect width="400" height="250" fill="#FFFFFF"/>
               <rect x="0" y="0" width="400" height="26" fill="#FAFAFA"/>
               <circle cx="16" cy="13" r="2.5" fill="#E5E5E5"/><circle cx="26" cy="13" r="2.5" fill="#E5E5E5"/><circle cx="36" cy="13" r="2.5" fill="#E5E5E5"/>
@@ -101,12 +186,14 @@
             <h3 class="design-tile-title">Modern &amp; minimalistisch</h3>
             <p class="design-tile-desc">Viel freier Raum, klare Formen, wenige Elemente. Wirkt zeitgemäß, aufgeräumt und selbstbewusst.</p>
             <p class="design-tile-fit">Beliebt bei: Architekturbüros, modernen Praxen und Vereinen</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
           </div>
         </div>
 
-        <div class="design-tile reveal" style="--i:2">
+        <!-- Stil 03: Warm & persönlich -->
+        <div class="design-tile reveal" style="--i:2" data-design="3" role="button" tabindex="0" aria-label="Stil 03 – Warm und persönlich, Vorschau öffnen">
           <div class="design-tile-frame">
-            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Beispiel warm-persönlicher Stil">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
               <rect width="400" height="250" fill="#F6EDE3"/>
               <rect x="0" y="0" width="400" height="28" fill="#FFF8F0"/>
               <circle cx="16" cy="14" r="3" fill="#E3C7AE"/><circle cx="28" cy="14" r="3" fill="#E3C7AE"/><circle cx="40" cy="14" r="3" fill="#E3C7AE"/>
@@ -122,22 +209,21 @@
             <h3 class="design-tile-title">Warm &amp; persönlich</h3>
             <p class="design-tile-desc">Runde Formen, warme Farben, einladende Sprache. Schafft Nähe, noch bevor der erste Kontakt entsteht.</p>
             <p class="design-tile-fit">Beliebt bei: Arzt- &amp; Zahnarztpraxen, Vereinen, Jugendorganisationen</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
           </div>
         </div>
 
-        <div class="design-tile reveal" style="--i:3">
+        <!-- Stil 04: Technisch & präzise -->
+        <div class="design-tile reveal" style="--i:3" data-design="4" role="button" tabindex="0" aria-label="Stil 04 – Technisch und präzise, Vorschau öffnen">
           <div class="design-tile-frame">
-            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Beispiel technisch-präziser Stil">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
               <rect width="400" height="250" fill="#0B1220"/>
               <rect x="0" y="0" width="400" height="26" fill="#111A2C"/>
               <circle cx="16" cy="13" r="2.5" fill="#2A3550"/><circle cx="26" cy="13" r="2.5" fill="#2A3550"/><circle cx="36" cy="13" r="2.5" fill="#2A3550"/>
               <g stroke="#1E2A44" stroke-width="1">
-                <line x1="0" y1="70" x2="400" y2="70"/>
-                <line x1="0" y1="115" x2="400" y2="115"/>
+                <line x1="0" y1="70" x2="400" y2="70"/><line x1="0" y1="115" x2="400" y2="115"/>
                 <line x1="0" y1="160" x2="400" y2="160"/>
-                <line x1="90" y1="26" x2="90" y2="250"/>
-                <line x1="200" y1="26" x2="200" y2="250"/>
-                <line x1="310" y1="26" x2="310" y2="250"/>
+                <line x1="90" y1="26" x2="90" y2="250"/><line x1="200" y1="26" x2="200" y2="250"/><line x1="310" y1="26" x2="310" y2="250"/>
               </g>
               <rect x="50" y="86" width="130" height="60" fill="none" stroke="#4FD1C5" stroke-width="1.5"/>
               <text x="55" y="80" font-family="Consolas, monospace" font-size="10" fill="#4FD1C5">01 / SYSTEM</text>
@@ -150,6 +236,272 @@
             <h3 class="design-tile-title">Technisch &amp; präzise</h3>
             <p class="design-tile-desc">Klares Raster, dunkler Kontrast, feine Details. Betont Genauigkeit und Fachwissen.</p>
             <p class="design-tile-fit">Beliebt bei: Ingenieurbüros und technisch ausgerichteten Organisationen</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
+          </div>
+        </div>
+
+        <!-- Stil 05: Lebendig & farbenfroh -->
+        <div class="design-tile reveal" style="--i:4" data-design="5" role="button" tabindex="0" aria-label="Stil 05 – Lebendig und farbenfroh, Vorschau öffnen">
+          <div class="design-tile-frame">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="250" fill="#FFFFFF"/>
+              <rect x="0" y="0" width="400" height="28" fill="#FAFAFA"/>
+              <circle cx="16" cy="14" r="3" fill="#E5E5E5"/><circle cx="26" cy="14" r="3" fill="#E5E5E5"/><circle cx="36" cy="14" r="3" fill="#E5E5E5"/>
+              <ellipse cx="330" cy="90" rx="65" ry="55" fill="#FF6B6B" opacity=".12"/>
+              <ellipse cx="75" cy="155" rx="52" ry="45" fill="#FDCA40" opacity=".18"/>
+              <ellipse cx="200" cy="130" rx="40" ry="35" fill="#845EC2" opacity=".1"/>
+              <rect x="50" y="68" width="150" height="13" rx="2" fill="#1A1A2E"/>
+              <rect x="50" y="91" width="100" height="7" rx="2" fill="#888"/>
+              <rect x="50" y="130" width="90" height="30" rx="15" fill="#FF6B6B"/>
+              <text x="95" y="150" font-family="Arial, sans-serif" font-size="10" fill="#fff" text-anchor="middle">Mehr erfahren</text>
+            </svg>
+          </div>
+          <div class="design-tile-body">
+            <p class="design-tile-tag">Stil 05</p>
+            <h3 class="design-tile-title">Lebendig &amp; farbenfroh</h3>
+            <p class="design-tile-desc">Bunte Farbakzente, freie Formen, viel Energie. Weckt Freude und Neugierde auf den ersten Blick.</p>
+            <p class="design-tile-fit">Beliebt bei: Vereine, Jugendorganisationen, Initiativen</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
+          </div>
+        </div>
+
+        <!-- Stil 06: Elegant & exklusiv -->
+        <div class="design-tile reveal" style="--i:5" data-design="6" role="button" tabindex="0" aria-label="Stil 06 – Elegant und exklusiv, Vorschau öffnen">
+          <div class="design-tile-frame">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="250" fill="#12100E"/>
+              <rect x="0" y="0" width="400" height="26" fill="#1C1816"/>
+              <circle cx="16" cy="13" r="2.5" fill="#2A2420"/><circle cx="26" cy="13" r="2.5" fill="#2A2420"/><circle cx="36" cy="13" r="2.5" fill="#2A2420"/>
+              <line x1="120" y1="72" x2="280" y2="72" stroke="#C9A84C" stroke-width=".8"/>
+              <text x="200" y="95" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="#F5EDD6" text-anchor="middle" letter-spacing="3">STUDIO</text>
+              <text x="200" y="114" font-family="Georgia, 'Times New Roman', serif" font-size="9" fill="#C9A84C" text-anchor="middle" letter-spacing="3">PREMIUM</text>
+              <line x1="120" y1="130" x2="280" y2="130" stroke="#C9A84C" stroke-width=".8"/>
+              <rect x="160" y="162" width="80" height="22" fill="none" stroke="#C9A84C" stroke-width="1"/>
+              <text x="200" y="178" font-family="Georgia, serif" font-size="8" fill="#C9A84C" text-anchor="middle" letter-spacing="2">ANFRAGEN</text>
+              <line x1="40" y1="222" x2="360" y2="222" stroke="#2A2420"/>
+            </svg>
+          </div>
+          <div class="design-tile-body">
+            <p class="design-tile-tag">Stil 06</p>
+            <h3 class="design-tile-title">Elegant &amp; exklusiv</h3>
+            <p class="design-tile-desc">Dunkler Hintergrund, goldene Akzente, feines Serif. Strahlt Exklusivität und Hochwertigkeit aus.</p>
+            <p class="design-tile-fit">Beliebt bei: Premiumpraxen, Notariate, hochwertige Büros</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
+          </div>
+        </div>
+
+        <!-- Stil 07: Natur & nachhaltig -->
+        <div class="design-tile reveal" style="--i:6" data-design="7" role="button" tabindex="0" aria-label="Stil 07 – Natur und nachhaltig, Vorschau öffnen">
+          <div class="design-tile-frame">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="250" fill="#EEF4E8"/>
+              <rect x="0" y="0" width="400" height="28" fill="#E4EDDB"/>
+              <circle cx="16" cy="14" r="3" fill="#B8D4A8"/><circle cx="26" cy="14" r="3" fill="#B8D4A8"/><circle cx="36" cy="14" r="3" fill="#B8D4A8"/>
+              <path d="M320 50 C340 80, 360 120, 320 180 C280 120, 300 80, 320 50Z" fill="#5A9E44" opacity=".2"/>
+              <path d="M320 180 L320 210" stroke="#5A9E44" stroke-width="2" opacity=".4"/>
+              <rect x="50" y="75" width="140" height="11" rx="2" fill="#1A3A0A" opacity=".8"/>
+              <rect x="50" y="97" width="95" height="6" rx="2" fill="#6B9A5A"/>
+              <rect x="50" y="112" width="110" height="6" rx="2" fill="#6B9A5A" opacity=".7"/>
+              <rect x="50" y="148" width="90" height="26" rx="5" fill="#5A9E44"/>
+              <text x="95" y="166" font-family="Arial, sans-serif" font-size="9.5" fill="#fff" text-anchor="middle">Mehr erfahren</text>
+            </svg>
+          </div>
+          <div class="design-tile-body">
+            <p class="design-tile-tag">Stil 07</p>
+            <h3 class="design-tile-title">Natur &amp; nachhaltig</h3>
+            <p class="design-tile-desc">Erdige Grüntöne, organische Formen, ruhige Wirkung. Vermittelt Vertrauen und Verantwortung.</p>
+            <p class="design-tile-fit">Beliebt bei: Umweltorganisationen, Wohlfahrtsverbände, soziale Initiativen</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
+          </div>
+        </div>
+
+        <!-- Stil 08: Mutig & expressiv -->
+        <div class="design-tile reveal" style="--i:7" data-design="8" role="button" tabindex="0" aria-label="Stil 08 – Mutig und expressiv, Vorschau öffnen">
+          <div class="design-tile-frame">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="250" fill="#F5F5F5"/>
+              <rect x="0" y="0" width="400" height="26" fill="#FFFFFF"/>
+              <circle cx="16" cy="13" r="2.5" fill="#DDD"/><circle cx="26" cy="13" r="2.5" fill="#DDD"/><circle cx="36" cy="13" r="2.5" fill="#DDD"/>
+              <rect x="-15" y="56" width="430" height="7" fill="#E63946" transform="rotate(-2,200,59)"/>
+              <rect x="40" y="74" width="230" height="20" rx="0" fill="#111111"/>
+              <rect x="40" y="102" width="160" height="20" rx="0" fill="#111111"/>
+              <rect x="40" y="130" width="100" height="20" rx="0" fill="#111111" opacity=".35"/>
+              <rect x="40" y="168" width="85" height="26" rx="0" fill="#E63946"/>
+              <text x="82" y="186" font-family="Arial, sans-serif" font-size="9.5" fill="#fff" text-anchor="middle" letter-spacing="1">LOS GEHTS</text>
+            </svg>
+          </div>
+          <div class="design-tile-body">
+            <p class="design-tile-tag">Stil 08</p>
+            <h3 class="design-tile-title">Mutig &amp; expressiv</h3>
+            <p class="design-tile-desc">Großflächige Typografie, starke Kontraste, roter Akzent. Hinterlässt einen bleibenden Eindruck.</p>
+            <p class="design-tile-fit">Beliebt bei: Kultureinrichtungen, kreative Verbände, Agenturen</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
+          </div>
+        </div>
+
+        <!-- Stil 09: Vintage & nostalgisch -->
+        <div class="design-tile reveal" style="--i:8" data-design="9" role="button" tabindex="0" aria-label="Stil 09 – Vintage und nostalgisch, Vorschau öffnen">
+          <div class="design-tile-frame">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="250" fill="#F2E8D5"/>
+              <rect x="0" y="0" width="400" height="28" fill="#EAD9C0"/>
+              <circle cx="16" cy="14" r="3" fill="#C9B08A"/><circle cx="26" cy="14" r="3" fill="#C9B08A"/><circle cx="36" cy="14" r="3" fill="#C9B08A"/>
+              <rect x="30" y="42" width="340" height="178" fill="none" stroke="#8B6914" stroke-width="1.5" stroke-dasharray="5,4"/>
+              <rect x="38" y="50" width="324" height="162" fill="none" stroke="#8B6914" stroke-width=".5"/>
+              <text x="200" y="102" font-family="Georgia, 'Times New Roman', serif" font-size="15" fill="#4A3010" text-anchor="middle">Seit 1987</text>
+              <line x1="120" y1="116" x2="280" y2="116" stroke="#8B6914" stroke-width="1"/>
+              <text x="200" y="136" font-family="Georgia, serif" font-size="9" fill="#8B6914" text-anchor="middle" letter-spacing="2">TRADITION &amp; QUALITAT</text>
+              <text x="200" y="160" font-family="Georgia, serif" font-size="7.5" fill="#6B5030" text-anchor="middle" letter-spacing="1">HANDWERK MIT HERZ</text>
+            </svg>
+          </div>
+          <div class="design-tile-body">
+            <p class="design-tile-tag">Stil 09</p>
+            <h3 class="design-tile-title">Vintage &amp; nostalgisch</h3>
+            <p class="design-tile-desc">Sepia-Töne, Ornamente, klassisches Serif. Erzählt Geschichte und strahlt Verlässlichkeit aus.</p>
+            <p class="design-tile-fit">Beliebt bei: Traditionsverbände, Kirchen, historische Vereine</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
+          </div>
+        </div>
+
+        <!-- Stil 10: Frisch & jugendlich -->
+        <div class="design-tile reveal" style="--i:9" data-design="10" role="button" tabindex="0" aria-label="Stil 10 – Frisch und jugendlich, Vorschau öffnen">
+          <div class="design-tile-frame">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="250" fill="#E0F4EF"/>
+              <rect x="0" y="0" width="400" height="28" fill="#CCF0E6"/>
+              <circle cx="16" cy="14" r="3" fill="#A8E6D4"/><circle cx="26" cy="14" r="3" fill="#A8E6D4"/><circle cx="36" cy="14" r="3" fill="#A8E6D4"/>
+              <ellipse cx="330" cy="130" rx="70" ry="60" fill="#00C9A7" opacity=".14"/>
+              <ellipse cx="310" cy="80" rx="40" ry="35" fill="#FF6B9D" opacity=".1"/>
+              <rect x="50" y="72" width="140" height="12" rx="6" fill="#00503E"/>
+              <rect x="50" y="95" width="100" height="6" rx="3" fill="#00856F"/>
+              <rect x="50" y="132" width="110" height="30" rx="15" fill="#00C9A7"/>
+              <text x="105" y="151" font-family="Arial, sans-serif" font-size="10" fill="#fff" text-anchor="middle">Jetzt starten</text>
+              <rect x="50" y="188" width="65" height="7" rx="3.5" fill="#FF6B9D" opacity=".5"/>
+              <rect x="126" y="188" width="50" height="7" rx="3.5" fill="#00C9A7" opacity=".45"/>
+            </svg>
+          </div>
+          <div class="design-tile-body">
+            <p class="design-tile-tag">Stil 10</p>
+            <h3 class="design-tile-title">Frisch &amp; jugendlich</h3>
+            <p class="design-tile-desc">Pastelltöne, runde Formen, helle Energie. Einladend, unbeschwert und modern.</p>
+            <p class="design-tile-fit">Beliebt bei: Jugendorganisationen, Sportvereine, Schulen</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
+          </div>
+        </div>
+
+        <!-- Stil 11: Sachlich & klar -->
+        <div class="design-tile reveal" style="--i:10" data-design="11" role="button" tabindex="0" aria-label="Stil 11 – Sachlich und klar, Vorschau öffnen">
+          <div class="design-tile-frame">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="250" fill="#FFFFFF"/>
+              <rect x="0" y="0" width="400" height="30" fill="#1B2A4A"/>
+              <rect x="14" y="9" width="55" height="12" rx="0" fill="#FFFFFF" opacity=".8"/>
+              <rect x="258" y="8" width="40" height="14" fill="none" stroke="#FFFFFF" stroke-width="1" opacity=".55"/>
+              <rect x="0" y="55" width="5" height="160" fill="#4A90D9"/>
+              <rect x="24" y="62" width="100" height="55" fill="#F5F7FA" stroke="#D0D8E4"/>
+              <rect x="148" y="62" width="100" height="55" fill="#F5F7FA" stroke="#D0D8E4"/>
+              <rect x="272" y="62" width="100" height="55" fill="#F5F7FA" stroke="#D0D8E4"/>
+              <rect x="30" y="70" width="80" height="6" fill="#1B2A4A" opacity=".6"/>
+              <rect x="30" y="84" width="60" height="4" fill="#6B80A0"/>
+              <rect x="30" y="94" width="70" height="4" fill="#6B80A0" opacity=".7"/>
+              <rect x="154" y="70" width="80" height="6" fill="#1B2A4A" opacity=".6"/>
+              <rect x="154" y="84" width="60" height="4" fill="#6B80A0"/>
+              <rect x="154" y="94" width="70" height="4" fill="#6B80A0" opacity=".7"/>
+              <rect x="278" y="70" width="80" height="6" fill="#1B2A4A" opacity=".6"/>
+              <rect x="278" y="84" width="60" height="4" fill="#6B80A0"/>
+              <rect x="278" y="94" width="70" height="4" fill="#6B80A0" opacity=".7"/>
+              <rect x="24" y="140" width="348" height="1" fill="#D0D8E4"/>
+              <rect x="24" y="160" width="220" height="8" fill="#1B2A4A" opacity=".5"/>
+              <rect x="24" y="178" width="150" height="6" fill="#6B80A0" opacity=".5"/>
+              <rect x="24" y="200" width="80" height="22" fill="#1B2A4A"/>
+              <text x="64" y="216" font-family="Arial, sans-serif" font-size="8.5" fill="#fff" text-anchor="middle">Kontakt</text>
+            </svg>
+          </div>
+          <div class="design-tile-body">
+            <p class="design-tile-tag">Stil 11</p>
+            <h3 class="design-tile-title">Sachlich &amp; klar</h3>
+            <p class="design-tile-desc">Klare Struktur, neutrale Farben, keine Ablenkung. Strahlt Seriosität und Verlässlichkeit aus.</p>
+            <p class="design-tile-fit">Beliebt bei: Verbände, Berufsorganisationen, Verwaltungen</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
+          </div>
+        </div>
+
+        <!-- Stil 12: Kreativ & künstlerisch -->
+        <div class="design-tile reveal" style="--i:11" data-design="12" role="button" tabindex="0" aria-label="Stil 12 – Kreativ und künstlerisch, Vorschau öffnen">
+          <div class="design-tile-frame">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="250" fill="#F9F6F0"/>
+              <rect x="0" y="0" width="400" height="26" fill="#F5F0E6"/>
+              <circle cx="16" cy="13" r="2.5" fill="#D8CCBA"/><circle cx="26" cy="13" r="2.5" fill="#D8CCBA"/><circle cx="36" cy="13" r="2.5" fill="#D8CCBA"/>
+              <ellipse cx="310" cy="110" rx="80" ry="70" fill="#F4A261" opacity=".14"/>
+              <ellipse cx="280" cy="155" rx="60" ry="50" fill="#E76F51" opacity=".1"/>
+              <rect x="50" y="68" width="165" height="15" rx="0" fill="#1A1208" transform="rotate(-1.5, 132, 75)"/>
+              <rect x="50" y="93" width="105" height="10" rx="0" fill="#1A1208" opacity=".35" transform="rotate(-1.5, 102, 98)"/>
+              <path d="M46 148 Q120 133 200 150 Q280 167 340 152" stroke="#E76F51" stroke-width="4" fill="none" stroke-linecap="round" opacity=".45"/>
+              <rect x="46" y="200" width="80" height="24" rx="4" fill="#E76F51"/>
+              <text x="86" y="217" font-family="Arial, sans-serif" font-size="9.5" fill="#fff" text-anchor="middle">Entdecken</text>
+            </svg>
+          </div>
+          <div class="design-tile-body">
+            <p class="design-tile-tag">Stil 12</p>
+            <h3 class="design-tile-title">Kreativ &amp; künstlerisch</h3>
+            <p class="design-tile-desc">Organische Formen, warme Akzente, verspielte Komposition. Für Organisationen, die mit Kreativität überzeugen.</p>
+            <p class="design-tile-fit">Beliebt bei: Kunstvereine, Kulturzentren, Musikvereine</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
+          </div>
+        </div>
+
+        <!-- Stil 13: Sportlich & dynamisch -->
+        <div class="design-tile reveal" style="--i:12" data-design="13" role="button" tabindex="0" aria-label="Stil 13 – Sportlich und dynamisch, Vorschau öffnen">
+          <div class="design-tile-frame">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="250" fill="#0D1117"/>
+              <rect x="0" y="0" width="400" height="26" fill="#161B22"/>
+              <circle cx="16" cy="13" r="2.5" fill="#30363D"/><circle cx="26" cy="13" r="2.5" fill="#30363D"/><circle cx="36" cy="13" r="2.5" fill="#30363D"/>
+              <polygon points="0,50 400,30 400,180 0,200" fill="#161B22"/>
+              <polygon points="0,30 90,30 30,100" fill="#39FF14" opacity=".1"/>
+              <polygon points="330,200 400,168 400,210" fill="#39FF14" opacity=".1"/>
+              <rect x="40" y="64" width="165" height="16" rx="0" fill="#FFFFFF" opacity=".9"/>
+              <rect x="40" y="90" width="200" height="10" rx="0" fill="#39FF14"/>
+              <rect x="40" y="112" width="110" height="7" rx="0" fill="#9CA3AF" opacity=".5"/>
+              <rect x="40" y="140" width="90" height="26" rx="2" fill="#39FF14"/>
+              <text x="85" y="158" font-family="Arial, sans-serif" font-size="9.5" fill="#0D1117" text-anchor="middle" font-weight="bold">STARTEN</text>
+            </svg>
+          </div>
+          <div class="design-tile-body">
+            <p class="design-tile-tag">Stil 13</p>
+            <h3 class="design-tile-title">Sportlich &amp; dynamisch</h3>
+            <p class="design-tile-desc">Dunkle Basis, schräge Elemente, knalliger Akzent. Voller Energie und Antrieb.</p>
+            <p class="design-tile-fit">Beliebt bei: Sportvereine, Fitnessangebote, Outdoor-Organisationen</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
+          </div>
+        </div>
+
+        <!-- Stil 14: Sozial & Gemeinschaft -->
+        <div class="design-tile reveal" style="--i:13" data-design="14" role="button" tabindex="0" aria-label="Stil 14 – Sozial und Gemeinschaft, Vorschau öffnen">
+          <div class="design-tile-frame">
+            <svg viewBox="0 0 400 250" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="250" fill="#F0EDF8"/>
+              <rect x="0" y="0" width="400" height="28" fill="#E8E4F4"/>
+              <circle cx="16" cy="14" r="3" fill="#C4B5ED"/><circle cx="26" cy="14" r="3" fill="#C4B5ED"/><circle cx="36" cy="14" r="3" fill="#C4B5ED"/>
+              <circle cx="230" cy="130" r="42" fill="#9B7FD4" opacity=".13"/>
+              <circle cx="290" cy="110" r="35" fill="#7C5CBF" opacity=".13"/>
+              <circle cx="260" cy="160" r="30" fill="#B8A2E8" opacity=".14"/>
+              <line x1="230" y1="130" x2="290" y2="110" stroke="#7C5CBF" stroke-width="1.5" opacity=".3"/>
+              <line x1="290" y1="110" x2="260" y2="160" stroke="#7C5CBF" stroke-width="1.5" opacity=".3"/>
+              <rect x="50" y="65" width="130" height="11" rx="2" fill="#3A2875" opacity=".8"/>
+              <rect x="50" y="86" width="90" height="6" rx="2" fill="#7C5CBF" opacity=".6"/>
+              <rect x="50" y="130" width="110" height="28" rx="14" fill="#7C5CBF"/>
+              <text x="105" y="149" font-family="Arial, sans-serif" font-size="9.5" fill="#fff" text-anchor="middle">Mitmachen</text>
+              <rect x="50" y="190" width="300" height="1" fill="#C4B5ED"/>
+            </svg>
+          </div>
+          <div class="design-tile-body">
+            <p class="design-tile-tag">Stil 14</p>
+            <h3 class="design-tile-title">Sozial &amp; Gemeinschaft</h3>
+            <p class="design-tile-desc">Violette Töne, verbindende Elemente, warmherzige Wirkung. Stellt Menschen und Gemeinschaft in den Vordergrund.</p>
+            <p class="design-tile-fit">Beliebt bei: Wohlfahrtsverbände, Nachbarschaftsinitiativen, soziale Vereine</p>
+            <p class="design-tile-hint">↗ Vorschau ansehen</p>
           </div>
         </div>
 
@@ -157,19 +509,21 @@
     </div>
   </section>
 
-  <!-- ÜBERSICHT / EMPFEHLUNG -->
+  <!-- EMPFEHLUNG -->
   <section style="padding-top:0;">
     <div class="wrap">
       <div class="recommend-box reveal">
-        <p class="eyebrow">Unsere Empfehlung</p>
-        <h2 style="font-size:20px; margin-top:8px;">Welcher Stil passt zu Ihnen?</h2>
+        <p class="eyebrow">Orientierung</p>
+        <h2 style="font-size:20px; margin-top:8px;">Welche Stimmung passt zu Ihnen?</h2>
         <ul class="recommend-list">
-          <li><strong>Klassisch &amp; seriös</strong> — ruhige Farben, klare Struktur <span>beliebt bei Kanzleien, Notariaten</span></li>
-          <li><strong>Modern &amp; minimalistisch</strong> — viel freier Raum, klare Formen <span>beliebt bei Architekturbüros</span></li>
-          <li><strong>Warm &amp; persönlich</strong> — runde Formen, warme Farben <span>beliebt bei Praxen und Vereinen</span></li>
-          <li><strong>Technisch &amp; präzise</strong> — dunkles Raster, feine Details <span>beliebt bei Ingenieurbüros</span></li>
+          <li><strong>Traditionell &amp; seriös</strong> — Stile 01, 09 <span>für Kanzleien, Notariate, Traditionsverbände</span></li>
+          <li><strong>Modern &amp; aufgeräumt</strong> — Stile 02, 11 <span>für Architekturbüros, Verbände, zeitgemäße Organisationen</span></li>
+          <li><strong>Warm &amp; menschlich</strong> — Stile 03, 07, 14 <span>für Praxen, Vereine, soziale Einrichtungen</span></li>
+          <li><strong>Bunt &amp; lebendig</strong> — Stile 05, 10 <span>für Jugendorganisationen, Initiativen, Sportvereine</span></li>
+          <li><strong>Dunkel &amp; exklusiv</strong> — Stile 04, 06, 13 <span>für Premiumangebote, Ingenieurbüros, Sportverbände</span></li>
+          <li><strong>Kreativ &amp; ausdrucksstark</strong> — Stile 08, 12 <span>für Kultureinrichtungen, Kunstvereine, kreative Verbände</span></li>
         </ul>
-        <p class="form-hint" style="margin-top:16px;">Das ist nur eine erste Orientierung. Jeder Stil passt zu jeder Art von Organisation — im Erstgespräch oder Screening-Formular finden wir gemeinsam die richtige Richtung für Ihr Projekt.</p>
+        <p class="form-hint" style="margin-top:16px;">Das sind nur erste Anhaltspunkte. Jeder Stil lässt sich individuell anpassen — im Screening-Formular oder Erstgespräch finden wir gemeinsam die richtige Richtung.</p>
       </div>
     </div>
   </section>
@@ -186,6 +540,26 @@
     </div>
   </section>
 </main>
+
+<!-- ── Design-Vorschau-Modal ────────────────────────── -->
+<div class="dmo-backdrop" id="dmo-backdrop" role="dialog" aria-modal="true" aria-labelledby="dmo-name" hidden>
+  <div class="dmo-box">
+    <div class="dmo-hd">
+      <div class="dmo-meta">
+        <p class="dmo-tag" id="dmo-tag"></p>
+        <h2 class="dmo-name" id="dmo-name"></h2>
+      </div>
+      <button class="dmo-close" id="dmo-close" aria-label="Vorschau schließen">&#x2715;</button>
+    </div>
+    <div class="dmo-preview" id="dmo-preview">
+      <span class="dmo-stamp">ENTWURF</span>
+    </div>
+    <div class="dmo-ft">
+      <p id="dmo-desc"></p>
+      <a class="btn btn-primary" href="kontakt.html">Diesen Stil anfragen</a>
+    </div>
+  </div>
+</div>
 
 <footer>
   <div class="wrap">
@@ -228,7 +602,7 @@
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 PRÄZIS Studio</span>
+      <span>&#169; 2026 PRÄZIS Studio</span>
       <span class="legal-links">
         <a href="impressum.html">Impressum</a>
         <a href="datenschutz.html">Datenschutz</a>
@@ -239,5 +613,241 @@
 </footer>
 
 <script src="main.js"></script>
+<script>
+(function () {
+  // ── Design data ──────────────────────────────────────
+  var STYLES = [
+    {
+      id: 1, tag: 'Stil 01', name: 'Klassisch & seriös',
+      desc: 'Ruhige Farben, klare Struktur, Serif-Schrift. Wirkt traditionell, verlässlich und seriös. Beliebt bei Kanzleien, Notariaten und Praxen mit langer Geschichte.',
+      bg:'#F3EFE6', nav:'#FFFFFF', logo:'#14203A', navItem:'#14203A',
+      heroBg:'#EAE4D6', heading:'#14203A', subText:'#7B8298',
+      accent:'#A9782E', btnR:2, h1w:300, h1h:28, h2w:200, subw:260, subh:10,
+      extra:'<line x1="60" y1="118" x2="280" y2="118" stroke="#A9782E" stroke-width="2"/>',
+      card:'#FFFFFF', cardB:'#D8CFC0', cardR:0, cardsBg:'#F3EFE6',
+      foot:'#14203A', footT:'#C8BEAE'
+    },
+    {
+      id: 2, tag: 'Stil 02', name: 'Modern & minimalistisch',
+      desc: 'Viel freier Raum, klare Formen, wenige Elemente. Wirkt zeitgemäß, aufgeräumt und selbstbewusst. Beliebt bei Architekturbüros und modernen Organisationen.',
+      bg:'#FFFFFF', nav:'#FAFAFA', logo:'#111111', navItem:'#111111',
+      heroBg:'#FFFFFF', heading:'#111111', subText:'#888888',
+      accent:'#111111', btnR:0, h1w:340, h1h:34, h2w:220, subw:220, subh:12,
+      extra:'<circle cx="680" cy="144" r="76" fill="none" stroke="#111111" stroke-width="1.5"/>',
+      card:'#F5F5F5', cardB:'none', cardR:0, cardsBg:'#FFFFFF',
+      foot:'#111111', footT:'#888888'
+    },
+    {
+      id: 3, tag: 'Stil 03', name: 'Warm & persönlich',
+      desc: 'Runde Formen, warme Farben, einladende Sprache. Schafft Nähe, noch bevor der erste Kontakt entsteht. Beliebt bei Arzt- und Zahnarztpraxen, Vereinen.',
+      bg:'#F6EDE3', nav:'#FFF8F0', logo:'#4A2800', navItem:'#4A2800',
+      heroBg:'#F0E2D0', heading:'#4A2800', subText:'#B98A63',
+      accent:'#C97B4A', btnR:24, h1w:280, h1h:28, h2w:200, subw:240, subh:10,
+      extra:'<circle cx="660" cy="144" r="84" fill="none" stroke="#C97B4A" stroke-width="3"/>',
+      card:'#FFFFFF', cardB:'#E3C7AE', cardR:12, cardsBg:'#F6EDE3',
+      foot:'#4A2800', footT:'#E3C7AE'
+    },
+    {
+      id: 4, tag: 'Stil 04', name: 'Technisch & präzise',
+      desc: 'Klares Raster, dunkler Kontrast, feine Details. Betont Genauigkeit und Fachwissen. Beliebt bei Ingenieurbüros und technisch ausgerichteten Organisationen.',
+      bg:'#0B1220', nav:'#111A2C', logo:'#4FD1C5', navItem:'#4FD1C5',
+      heroBg:'#0F1929', heading:'#FFFFFF', subText:'#4FD1C5',
+      accent:'#4FD1C5', btnR:2, h1w:300, h1h:28, h2w:220, subw:250, subh:11,
+      extra:'<line x1="0" y1="100" x2="800" y2="100" stroke="#1E2A44" stroke-width="1"/><line x1="0" y1="180" x2="800" y2="180" stroke="#1E2A44" stroke-width="1"/><line x1="200" y1="44" x2="200" y2="244" stroke="#1E2A44" stroke-width="1"/><line x1="600" y1="44" x2="600" y2="244" stroke="#1E2A44" stroke-width="1"/>',
+      card:'#111A2C', cardB:'#4FD1C5', cardR:0, cardsBg:'#0B1220',
+      foot:'#090E18', footT:'#4FD1C5'
+    },
+    {
+      id: 5, tag: 'Stil 05', name: 'Lebendig & farbenfroh',
+      desc: 'Bunte Farbakzente, freie Formen, viel Energie. Weckt Freude und Neugierde auf den ersten Blick. Beliebt bei Vereinen, Jugendorganisationen und Initiativen.',
+      bg:'#FFFFFF', nav:'#FAFAFA', logo:'#1A1A2E', navItem:'#1A1A2E',
+      heroBg:'#FFFFFF', heading:'#1A1A2E', subText:'#555555',
+      accent:'#FF6B6B', btnR:20, h1w:300, h1h:28, h2w:220, subw:250, subh:11,
+      extra:'<ellipse cx="680" cy="144" rx="100" ry="90" fill="#FF6B6B" opacity=".1"/><ellipse cx="600" cy="90" rx="60" ry="55" fill="#FDCA40" opacity=".12"/><ellipse cx="720" cy="190" rx="50" ry="45" fill="#845EC2" opacity=".1"/>',
+      card:'#FFF8F8', cardB:'#FFD6D6', cardR:12, cardsBg:'#FFFAF5',
+      foot:'#1A1A2E', footT:'#FDCA40'
+    },
+    {
+      id: 6, tag: 'Stil 06', name: 'Elegant & exklusiv',
+      desc: 'Dunkler Hintergrund, goldene Akzente, feines Serif. Strahlt Exklusivität und Hochwertigkeit aus. Beliebt bei Premiumpraxen, Notariaten und hochwertigen Büros.',
+      bg:'#12100E', nav:'#1C1816', logo:'#C9A84C', navItem:'#C9A84C',
+      heroBg:'#1A1612', heading:'#F5EDD6', subText:'#C9A84C',
+      accent:'#C9A84C', btnR:0, h1w:300, h1h:28, h2w:200, subw:230, subh:10,
+      extra:'<line x1="60" y1="118" x2="320" y2="118" stroke="#C9A84C" stroke-width=".8"/><line x1="60" y1="165" x2="200" y2="165" stroke="#C9A84C" stroke-width=".8"/>',
+      card:'#1C1816', cardB:'#C9A84C', cardR:0, cardsBg:'#12100E',
+      foot:'#0E0C0A', footT:'#C9A84C'
+    },
+    {
+      id: 7, tag: 'Stil 07', name: 'Natur & nachhaltig',
+      desc: 'Erdige Grüntöne, organische Formen, ruhige Wirkung. Vermittelt Vertrauen und Verantwortung. Beliebt bei Umweltorganisationen und Wohlfahrtsverbänden.',
+      bg:'#EEF4E8', nav:'#E4EDDB', logo:'#2D5A1B', navItem:'#2D5A1B',
+      heroBg:'#E2EDD9', heading:'#1A3A0A', subText:'#6B9A5A',
+      accent:'#5A9E44', btnR:6, h1w:300, h1h:26, h2w:200, subw:250, subh:10,
+      extra:'<path d="M640 44 C660 80, 700 120, 640 200 C580 120, 620 80, 640 44Z" fill="#5A9E44" opacity=".18"/>',
+      card:'#FFFFFF', cardB:'#B8D4A8', cardR:8, cardsBg:'#EEF4E8',
+      foot:'#2D5A1B', footT:'#C8E6B4'
+    },
+    {
+      id: 8, tag: 'Stil 08', name: 'Mutig & expressiv',
+      desc: 'Großflächige Typografie, starke Kontraste, roter Akzent. Hinterlässt einen bleibenden Eindruck. Beliebt bei Kultureinrichtungen und kreativen Verbänden.',
+      bg:'#F5F5F5', nav:'#FFFFFF', logo:'#111111', navItem:'#111111',
+      heroBg:'#F5F5F5', heading:'#111111', subText:'#555555',
+      accent:'#E63946', btnR:0, h1w:400, h1h:38, h2w:260, subw:240, subh:13,
+      extra:'<rect x="-10" y="58" width="820" height="8" fill="#E63946" transform="rotate(-1.5,400,62)"/>',
+      card:'#EBEBEB', cardB:'none', cardR:0, cardsBg:'#F5F5F5',
+      foot:'#111111', footT:'#E63946'
+    },
+    {
+      id: 9, tag: 'Stil 09', name: 'Vintage & nostalgisch',
+      desc: 'Sepia-Töne, Ornamente, klassisches Serif. Erzählt Geschichte und strahlt Verlässlichkeit aus. Beliebt bei Traditionsverbänden, Kirchen und historischen Vereinen.',
+      bg:'#F2E8D5', nav:'#EAD9C0', logo:'#4A3010', navItem:'#4A3010',
+      heroBg:'#EAD9C0', heading:'#4A3010', subText:'#8B6914',
+      accent:'#8B6914', btnR:0, h1w:280, h1h:26, h2w:200, subw:240, subh:10,
+      extra:'<rect x="40" y="52" width="720" height="192" fill="none" stroke="#8B6914" stroke-width="1.5" stroke-dasharray="6,4"/><rect x="50" y="62" width="700" height="172" fill="none" stroke="#8B6914" stroke-width=".5"/>',
+      card:'#FFFFFF', cardB:'#C9A878', cardR:0, cardsBg:'#F2E8D5',
+      foot:'#4A3010', footT:'#C9A878'
+    },
+    {
+      id: 10, tag: 'Stil 10', name: 'Frisch & jugendlich',
+      desc: 'Pastelltöne, runde Formen, helle Energie. Einladend, unbeschwert und modern. Beliebt bei Jugendorganisationen, Sportvereinen und Schulen.',
+      bg:'#E0F4EF', nav:'#CCF0E6', logo:'#00856F', navItem:'#00856F',
+      heroBg:'#E0F4EF', heading:'#00503E', subText:'#00856F',
+      accent:'#00C9A7', btnR:20, h1w:280, h1h:26, h2w:200, subw:230, subh:10,
+      extra:'<ellipse cx="640" cy="144" rx="110" ry="80" fill="#00C9A7" opacity=".12"/><ellipse cx="690" cy="95" rx="50" ry="45" fill="#FF6B9D" opacity=".1"/>',
+      card:'#FFFFFF', cardB:'#A8E6D4', cardR:16, cardsBg:'#E0F4EF',
+      foot:'#00503E', footT:'#A8E6D4'
+    },
+    {
+      id: 11, tag: 'Stil 11', name: 'Sachlich & klar',
+      desc: 'Klare Struktur, neutrale Farben, keine Ablenkung. Strahlt Seriosität und Verlässlichkeit aus. Beliebt bei Verbänden, Berufsorganisationen und Verwaltungen.',
+      bg:'#FFFFFF', nav:'#1B2A4A', logo:'#FFFFFF', navItem:'#FFFFFF',
+      heroBg:'#F5F7FA', heading:'#1B2A4A', subText:'#6B80A0',
+      accent:'#1B2A4A', btnR:2, h1w:300, h1h:28, h2w:220, subw:250, subh:11,
+      extra:'<rect x="0" y="44" width="6" height="200" fill="#4A90D9"/>',
+      card:'#F5F7FA', cardB:'#D0D8E4', cardR:4, cardsBg:'#FFFFFF',
+      foot:'#1B2A4A', footT:'#A0B4CC'
+    },
+    {
+      id: 12, tag: 'Stil 12', name: 'Kreativ & künstlerisch',
+      desc: 'Organische Formen, warme Akzente, verspielte Komposition. Für Organisationen, die mit Kreativität überzeugen. Beliebt bei Kunstvereinen und Kulturzentren.',
+      bg:'#F9F6F0', nav:'#F5F0E6', logo:'#1A1208', navItem:'#1A1208',
+      heroBg:'#F9F6F0', heading:'#1A1208', subText:'#8B7355',
+      accent:'#E76F51', btnR:4, h1w:300, h1h:28, h2w:200, subw:240, subh:10,
+      extra:'<ellipse cx="640" cy="130" rx="120" ry="100" fill="#F4A261" opacity=".15"/><ellipse cx="580" cy="185" rx="80" ry="70" fill="#E76F51" opacity=".12"/><path d="M60 185 Q180 168 280 185 Q380 202 460 178" stroke="#E76F51" stroke-width="5" fill="none" stroke-linecap="round" opacity=".35"/>',
+      card:'#FFFFFF', cardB:'#F0DFC8', cardR:10, cardsBg:'#F9F6F0',
+      foot:'#1A1208', footT:'#F4A261'
+    },
+    {
+      id: 13, tag: 'Stil 13', name: 'Sportlich & dynamisch',
+      desc: 'Dunkle Basis, schräge Elemente, knalliger Akzent. Voller Energie und Antrieb. Beliebt bei Sportvereinen, Fitnessangeboten und Outdoor-Organisationen.',
+      bg:'#0D1117', nav:'#161B22', logo:'#39FF14', navItem:'#C8D4E0',
+      heroBg:'#0D1117', heading:'#FFFFFF', subText:'#9CA3AF',
+      accent:'#39FF14', btnR:2, h1w:300, h1h:28, h2w:220, subw:250, subh:11,
+      extra:'<polygon points="0,80 800,44 800,244 0,244" fill="#161B22"/><polygon points="0,44 120,44 60,120" fill="#39FF14" opacity=".12"/><polygon points="680,200 800,160 800,244" fill="#39FF14" opacity=".1"/>',
+      card:'#161B22', cardB:'#30363D', cardR:4, cardsBg:'#0D1117',
+      foot:'#090D12', footT:'#39FF14'
+    },
+    {
+      id: 14, tag: 'Stil 14', name: 'Sozial & Gemeinschaft',
+      desc: 'Violette Töne, verbindende Elemente, warmherzige Wirkung. Stellt Menschen und Gemeinschaft in den Vordergrund. Beliebt bei Wohlfahrtsverbänden und sozialen Vereinen.',
+      bg:'#F0EDF8', nav:'#E8E4F4', logo:'#3A2875', navItem:'#3A2875',
+      heroBg:'#EAE5F5', heading:'#3A2875', subText:'#7C5CBF',
+      accent:'#7C5CBF', btnR:20, h1w:280, h1h:26, h2w:200, subw:230, subh:10,
+      extra:'<circle cx="620" cy="120" r="70" fill="#9B7FD4" opacity=".12"/><circle cx="680" cy="175" r="50" fill="#7C5CBF" opacity=".1"/><circle cx="560" cy="165" r="40" fill="#B8A2E8" opacity=".12"/>',
+      card:'#FFFFFF', cardB:'#D4C8F0', cardR:12, cardsBg:'#F0EDF8',
+      foot:'#3A2875', footT:'#C4B5ED'
+    }
+  ];
+
+  // ── SVG preview generator ─────────────────────────────
+  function makeSVG(s) {
+    var r = s.cardR || 0;
+    var br = s.btnR !== undefined ? s.btnR : 4;
+    var bStroke = (s.cardB && s.cardB !== 'none') ? ('stroke="' + s.cardB + '" stroke-width="1"') : '';
+    return '<svg viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg">' +
+      '<rect width="800" height="480" fill="' + s.bg + '"/>' +
+      '<rect width="800" height="44" fill="' + s.nav + '"/>' +
+      '<rect x="24" y="16" width="72" height="12" rx="2" fill="' + s.logo + '" opacity=".9"/>' +
+      '<rect x="480" y="18" width="48" height="8" rx="2" fill="' + s.navItem + '" opacity=".5"/>' +
+      '<rect x="546" y="18" width="48" height="8" rx="2" fill="' + s.navItem + '" opacity=".5"/>' +
+      '<rect x="612" y="18" width="48" height="8" rx="2" fill="' + s.navItem + '" opacity=".5"/>' +
+      '<rect x="690" y="13" width="86" height="18" rx="' + br + '" fill="' + s.accent + '"/>' +
+      '<rect x="0" y="44" width="800" height="200" fill="' + (s.heroBg || s.bg) + '"/>' +
+      (s.extra || '') +
+      '<rect x="60" y="82" width="' + (s.h1w||300) + '" height="' + (s.h1h||28) + '" rx="' + br + '" fill="' + s.heading + '"/>' +
+      '<rect x="60" y="' + (82 + (s.h1h||28) + 16) + '" width="' + (s.h2w||200) + '" height="' + (s.h1h||28) + '" rx="' + br + '" fill="' + s.heading + '" opacity=".6"/>' +
+      '<rect x="60" y="168" width="' + (s.subw||240) + '" height="' + (s.subh||11) + '" rx="3" fill="' + s.subText + '" opacity=".6"/>' +
+      '<rect x="60" y="193" width="120" height="28" rx="' + br + '" fill="' + s.accent + '"/>' +
+      '<rect x="0" y="244" width="800" height="160" fill="' + (s.cardsBg||s.bg) + '"/>' +
+      '<rect x="60" y="266" width="206" height="104" rx="' + r + '" fill="' + s.card + '" ' + bStroke + '/>' +
+      '<rect x="297" y="266" width="206" height="104" rx="' + r + '" fill="' + s.card + '" ' + bStroke + '/>' +
+      '<rect x="534" y="266" width="206" height="104" rx="' + r + '" fill="' + s.card + '" ' + bStroke + '/>' +
+      '<rect x="76" y="286" width="130" height="9" rx="2" fill="' + s.heading + '" opacity=".55"/>' +
+      '<rect x="76" y="305" width="96" height="6" rx="2" fill="' + s.subText + '" opacity=".45"/>' +
+      '<rect x="76" y="319" width="110" height="6" rx="2" fill="' + s.subText + '" opacity=".35"/>' +
+      '<rect x="313" y="286" width="130" height="9" rx="2" fill="' + s.heading + '" opacity=".55"/>' +
+      '<rect x="313" y="305" width="96" height="6" rx="2" fill="' + s.subText + '" opacity=".45"/>' +
+      '<rect x="313" y="319" width="110" height="6" rx="2" fill="' + s.subText + '" opacity=".35"/>' +
+      '<rect x="550" y="286" width="130" height="9" rx="2" fill="' + s.heading + '" opacity=".55"/>' +
+      '<rect x="550" y="305" width="96" height="6" rx="2" fill="' + s.subText + '" opacity=".45"/>' +
+      '<rect x="550" y="319" width="110" height="6" rx="2" fill="' + s.subText + '" opacity=".35"/>' +
+      '<rect x="0" y="404" width="800" height="76" fill="' + s.foot + '"/>' +
+      '<rect x="60" y="424" width="72" height="9" rx="2" fill="' + s.footT + '" opacity=".6"/>' +
+      '<rect x="60" y="441" width="130" height="6" rx="2" fill="' + s.footT + '" opacity=".35"/>' +
+      '<rect x="580" y="424" width="56" height="8" rx="2" fill="' + s.footT + '" opacity=".4"/>' +
+      '<rect x="656" y="424" width="56" height="8" rx="2" fill="' + s.footT + '" opacity=".4"/>' +
+    '</svg>';
+  }
+
+  // ── Modal logic ───────────────────────────────────────
+  var backdrop = document.getElementById('dmo-backdrop');
+  var preview  = document.getElementById('dmo-preview');
+  var tagEl    = document.getElementById('dmo-tag');
+  var nameEl   = document.getElementById('dmo-name');
+  var descEl   = document.getElementById('dmo-desc');
+  var closeBtn = document.getElementById('dmo-close');
+
+  function openModal(id) {
+    var s = STYLES.find(function(x){ return x.id === id; });
+    if (!s) return;
+    tagEl.textContent  = s.tag;
+    nameEl.textContent = s.name;
+    descEl.textContent = s.desc;
+    preview.innerHTML  = '<span class="dmo-stamp">ENTWURF</span>' + makeSVG(s);
+    backdrop.removeAttribute('hidden');
+    requestAnimationFrame(function(){
+      backdrop.classList.add('is-open');
+    });
+    document.body.style.overflow = 'hidden';
+    closeBtn.focus();
+  }
+
+  function closeModal() {
+    backdrop.classList.remove('is-open');
+    document.body.style.overflow = '';
+    setTimeout(function(){ backdrop.setAttribute('hidden', ''); }, 230);
+  }
+
+  // Tile clicks
+  document.querySelectorAll('.design-tile').forEach(function(tile) {
+    function handleOpen() {
+      openModal(parseInt(tile.dataset.design, 10));
+    }
+    tile.addEventListener('click', handleOpen);
+    tile.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleOpen(); }
+    });
+  });
+
+  // Close triggers
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', function(e) {
+    if (e.target === backdrop) closeModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && backdrop.classList.contains('is-open')) closeModal();
+  });
+})();
+</script>
 </body>
 </html>

@@ -144,23 +144,24 @@ header.site{
 .nav-cta:hover{border-color:var(--brass); color:var(--brass); transform:translateY(-1px);}
 .nav-toggle{
   display:none; background:none; border:1px solid var(--line-strong); border-radius:var(--radius);
-  width:40px; height:40px; align-items:center; justify-content:center; cursor:pointer; flex:none;
+  width:44px; height:44px; align-items:center; justify-content:center; cursor:pointer; flex:none;
 }
 .nav-toggle svg{width:20px; height:20px; color:var(--ink);}
-@media (max-width:900px){
+@media (max-width:1060px){
   .navlinks{
-    position:fixed; inset:65px 0 0 0; z-index:39; background:var(--bg);
+    position:fixed; inset:73px 0 0 0; z-index:39; background:var(--bg);
     flex-direction:column; align-items:flex-start; gap:0; padding:8px 24px 24px;
     transform:translateY(-8px); opacity:0; pointer-events:none; transition:opacity .22s var(--ease), transform .22s var(--ease);
     overflow-y:auto;
   }
-  .navlinks a{width:100%; padding:16px 0; border-bottom:1px solid var(--line); font-size:16px;}
+  .navlinks a{width:100%; padding:16px 4px; border-bottom:1px solid var(--line); font-size:16px;}
   .navlinks a::after{display:none;}
   body.nav-open .navlinks{opacity:1; transform:translateY(0); pointer-events:auto; display:flex;}
   .nav-toggle{display:inline-flex;}
   .nav-cta{display:none;}
   body.nav-open .nav-cta{
-    display:inline-flex; position:fixed; left:24px; right:24px; bottom:24px; z-index:39;
+    display:inline-flex; position:fixed; left:24px; right:24px;
+    bottom:calc(24px + env(safe-area-inset-bottom)); z-index:39;
     justify-content:center; background:var(--brass); color:#1B1204; border-color:var(--brass);
   }
   body.nav-open{overflow:hidden;}
@@ -420,9 +421,10 @@ a.choice-card:hover{transform:translateY(-3px); border-color:var(--brass); box-s
 }
 .file-list-item button{
   background:none; border:none; color:var(--ink-faint); font-size:18px; line-height:1;
-  cursor:pointer; padding:0 2px; transition:color .15s;
+  cursor:pointer; transition:color .15s, background .15s;
+  width:30px; height:30px; flex:none; border-radius:50%; display:flex; align-items:center; justify-content:center;
 }
-.file-list-item button:hover{color:var(--brass);}
+.file-list-item button:hover{color:var(--brass); background:color-mix(in srgb, var(--brass) 12%, transparent);}
 
 /* ---------- 13. Abschluss-CTA ---------- */
 .cta-band{
@@ -557,3 +559,50 @@ footer{border-top:1px solid var(--line); padding:56px 0 40px;}
   letter-spacing:.05em; text-transform:uppercase; border:1px solid var(--line-strong); border-radius:3px; padding:3px 9px;
 }
 .profile-card p.profile-bio{font-size:13px; margin-top:12px;}
+
+/* ---------- 21. Mobile-Feinschliff (Handy & iPad) ---------- */
+
+/* iOS Safari zoomt automatisch in die Seite, wenn ein fokussiertes Eingabefeld
+   unter 16px Schriftgröße hat. Auf kleinen Screens daher alle Formularfelder
+   auf mind. 16px anheben — verhindert den ruckartigen Zoom beim Antippen. */
+@media (max-width:640px){
+  .form-field input,
+  .form-field select,
+  .form-field textarea,
+  .slot-row input,
+  .newsletter input{
+    font-size:16px;
+  }
+}
+
+/* Größere Touch-Ziele auf Touch-Geräten (mind. ~44px, Apple-/Android-Empfehlung) */
+@media (max-width:900px){
+  .btn{ padding:15px 26px; }
+  .nav-cta{ padding:12px 18px; }
+  .checkbox-chip{ padding:12px 16px; }
+  .mode-toggle label{ padding:14px 18px; }
+  .faq-item summary{ padding:20px 20px; }
+  .newsletter button{ padding:0 20px; }
+  .foot-col a, .navlinks a{ min-height:44px; display:flex; align-items:center; }
+  .breadcrumb a{ display:inline-block; padding:4px 0; }
+}
+
+/* Karten/Kacheln auf iPad-Breite (768–1024px) etwas kompakter, damit auf dem
+   iPad im Hochformat nichts zu breit oder zu eng wirkt */
+@media (min-width:641px) and (max-width:1024px){
+  .value-grid{ grid-template-columns:repeat(2,1fr); }
+  .price-grid, .design-grid, .port-grid{ grid-template-columns:repeat(2,1fr); max-width:none; }
+}
+
+/* Sicherer Abstand am unteren Rand bei Geräten mit Home-Indikator (iPhone) */
+footer{ padding-bottom:calc(40px + env(safe-area-inset-bottom)); }
+.wrap{ padding-left:max(24px, env(safe-area-inset-left)); padding-right:max(24px, env(safe-area-inset-right)); }
+@media (max-width:640px){
+  .wrap{ padding-left:max(18px, env(safe-area-inset-left)); padding-right:max(18px, env(safe-area-inset-right)); }
+}
+
+/* Verhindert horizontales Verrutschen langer Wörter/Links auf sehr schmalen Screens */
+@media (max-width:380px){
+  .hero h1, .page-hero h1{ word-break:break-word; }
+  .price-card .price-tag, .form-step-title, .faq-item summary{ font-size:clamp(15px, 4.2vw, 19px); }
+}

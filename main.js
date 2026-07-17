@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function(){
       if (e.key === 'Escape') { closeNav(); }
     });
     window.addEventListener('resize', function(){
-      if (window.innerWidth > 900) { closeNav(); }
+      if (window.innerWidth > 1060) { closeNav(); }
     });
   }
 

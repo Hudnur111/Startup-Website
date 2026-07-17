@@ -24,6 +24,9 @@
   letter-spacing: .04em;
 }
 
+/* ── Modal action buttons ────────────────────────── */
+.dmo-actions { display:flex; gap:10px; flex-wrap:wrap; }
+
 /* ── Design-Vorschau-Modal ───────────────────────── */
 .dmo-backdrop {
   position: fixed; inset: 0; z-index: 900;
@@ -556,7 +559,10 @@
     </div>
     <div class="dmo-ft">
       <p id="dmo-desc"></p>
-      <a class="btn btn-primary" href="kontakt.html">Diesen Stil anfragen</a>
+      <div class="dmo-actions">
+        <a class="btn btn-ghost" id="dmo-link-screening" href="screening.html">Screening-Formular</a>
+        <a class="btn btn-primary" id="dmo-link-kontakt" href="kontakt.html">Kontaktformular</a>
+      </div>
     </div>
   </div>
 </div>
@@ -814,6 +820,9 @@
     nameEl.textContent = s.name;
     descEl.textContent = s.desc;
     preview.innerHTML  = '<span class="dmo-stamp">ENTWURF</span>' + makeSVG(s);
+    var enc = encodeURIComponent(s.name);
+    document.getElementById('dmo-link-kontakt').href   = 'kontakt.html?stil=' + enc;
+    document.getElementById('dmo-link-screening').href = 'screening.html?stil=' + enc;
     backdrop.removeAttribute('hidden');
     requestAnimationFrame(function(){
       backdrop.classList.add('is-open');

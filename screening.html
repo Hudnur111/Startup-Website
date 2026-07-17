@@ -10,6 +10,19 @@
 <meta name="theme-color" content="#0E1420">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='4' fill='%230E1420'/%3E%3Cpath d='M6 20 L14 7 L22 20' stroke='%23A9782E' stroke-width='2' fill='none' stroke-linejoin='round' stroke-linecap='round'/%3E%3Cline x1='10' y1='14.5' x2='18' y2='14.5' stroke='%23A9782E' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
+<style>
+.stil-banner{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  background:color-mix(in srgb, var(--brass) 10%, var(--surface));
+  border:1px solid var(--brass); border-radius:8px;
+  padding:12px 16px; margin-bottom:16px;
+}
+.stil-banner svg{ flex-shrink:0; color:var(--brass); }
+.stil-banner-text{ flex:1; font-size:13.5px; }
+.stil-banner-text strong{ color:var(--brass); }
+.stil-banner-link{ font-size:12px; font-family:var(--mono); color:var(--ink-faint); white-space:nowrap; }
+.stil-banner-link:hover{ color:var(--brass); }
+</style>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
@@ -198,6 +211,15 @@
           <div>
             <p class="form-step-title">Design &amp; Stil</p>
             <p class="form-step-desc">Damit der erste Entwurf schon in Ihre Richtung geht.</p>
+
+            <!-- Stil-Banner (erscheint nur bei ?stil= URL-Parameter) -->
+            <div class="stil-banner" id="stil-banner-sf" style="display:none">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2l3.1 6.3L22 9.3l-5 4.9 1.2 6.9L12 18l-6.2 3.1L7 14.2 2 9.3l6.9-1z"/></svg>
+              <span class="stil-banner-text">Aus der Design-Galerie vorausgewählt: <strong id="stil-banner-sf-name"></strong></span>
+              <a class="stil-banner-link" href="designs.html">← Stil ändern</a>
+            </div>
+            <input type="hidden" name="wunschdesign" id="sf-wunschdesign">
+
             <div class="checkbox-group">
               <label class="checkbox-chip"><input type="checkbox" name="stil_klassisch" value="Klassisch / seriös">Klassisch / seriös</label>
               <label class="checkbox-chip"><input type="checkbox" name="stil_modern" value="Modern / minimalistisch">Modern / minimalistisch</label>
@@ -332,5 +354,33 @@
 </footer>
 
 <script src="main.js"></script>
+<script>
+(function(){
+  var stil = new URLSearchParams(window.location.search).get('stil');
+  if (!stil) return;
+
+  var banner  = document.getElementById('stil-banner-sf');
+  var nameEl  = document.getElementById('stil-banner-sf-name');
+  var hidden  = document.getElementById('sf-wunschdesign');
+  if (banner && nameEl && hidden) {
+    nameEl.textContent = stil;
+    hidden.value = stil;
+    banner.style.display = 'flex';
+  }
+
+  // Auto-check matching chip if it's one of the 4 base styles
+  var map = {
+    'Klassisch & seriös':      'stil_klassisch',
+    'Modern & minimalistisch': 'stil_modern',
+    'Warm & persönlich':       'stil_warm',
+    'Technisch & präzise':     'stil_technisch'
+  };
+  var cbName = map[stil];
+  if (cbName) {
+    var cb = document.querySelector('input[name="' + cbName + '"]');
+    if (cb) cb.checked = true;
+  }
+})();
+</script>
 </body>
 </html>

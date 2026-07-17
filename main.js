@@ -19,27 +19,33 @@ document.addEventListener('DOMContentLoaded', function(){
     navBackdrop.setAttribute('aria-hidden', 'true');
     document.body.appendChild(navBackdrop);
 
-    var closeNav = function(){
+    var closeNav = function(returnFocus){
+      var wasOpen = document.body.classList.contains('nav-open');
       document.body.classList.remove('nav-open');
       navToggle.setAttribute('aria-expanded', 'false');
       navToggle.setAttribute('aria-label', 'Menü öffnen');
       navIcon.innerHTML = '<line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>';
+      if (returnFocus && wasOpen) { navToggle.focus(); }
     };
     var openNav = function(){
       document.body.classList.add('nav-open');
       navToggle.setAttribute('aria-expanded', 'true');
       navToggle.setAttribute('aria-label', 'Menü schließen');
       navIcon.innerHTML = '<line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/>';
+      /* Fokus auf den ersten Menüpunkt, damit Tastatur- und Screenreader-Nutzer
+         direkt im geöffneten Popup landen statt weiter auf dem Button zu stehen. */
+      var firstLink = navLinks.querySelector('a');
+      if (firstLink) { firstLink.focus(); }
     };
     navToggle.addEventListener('click', function(){
-      document.body.classList.contains('nav-open') ? closeNav() : openNav();
+      document.body.classList.contains('nav-open') ? closeNav(true) : openNav();
     });
     navLinks.addEventListener('click', function(e){
-      if (e.target.tagName === 'A') { closeNav(); }
+      if (e.target.tagName === 'A') { closeNav(false); }
     });
-    navBackdrop.addEventListener('click', closeNav);
+    navBackdrop.addEventListener('click', function(){ closeNav(true); });
     window.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') { closeNav(); }
+      if (e.key === 'Escape') { closeNav(true); }
     });
     window.addEventListener('resize', function(){
       if (window.innerWidth > 1060) { closeNav(); }

@@ -57,6 +57,6 @@ Automatisches Deployment über Netlify bei jedem Push. Konfiguration: [`netlify.
 
 <div align="center">
 
-📧 [kontakt@praezis-studio.de](mailto:kontakt@praezis-studio.de) · Made in Germany 🇩🇪
+📧 [denny.svalina.praezis@gmail.com](mailto:denny.svalina.praezis@gmail.com) · Made in Germany 🇩🇪
 
 </div>

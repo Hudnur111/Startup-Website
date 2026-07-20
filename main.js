@@ -134,10 +134,12 @@ function sendEmailNotification(form, subject, formLabel){
   if (EMAILJS_CUSTOMER_READY && customerEmail) {
     var customerParams = {
       to_email: customerEmail,
+      email: customerEmail,
       from_name: 'PRÄZIS',
       reply_to: 'denny.svalina.praezis@gmail.com',
       subject: 'Danke für Ihre Nachricht — PRÄZIS',
       absender_name: customerName,
+      name: customerName,
       message: summary
     };
     emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE_ID, customerParams).catch(function(err){
@@ -239,6 +241,8 @@ document.addEventListener('DOMContentLoaded', function(){
         form.reset();
         var fileList = form.querySelector('.file-list');
         if (fileList) { fileList.innerHTML = ''; }
+        var uploadError = document.getElementById('file-upload-error');
+        if (uploadError) { uploadError.textContent = ''; }
       }).catch(function(){
         status.textContent = 'Danke! Der Versand klappt erst nach dem Netlify-Deploy — lokal kann das Formular nicht senden.';
       });
@@ -273,10 +277,13 @@ document.addEventListener('DOMContentLoaded', function(){
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   }
 
-  function wireFileUpload(dropId, inputId, listId){
+  var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB — siehe Hinweistext im Upload-Feld
+
+  function wireFileUpload(dropId, inputId, listId, errorId){
     var drop = document.getElementById(dropId);
     var input = document.getElementById(inputId);
     var list = document.getElementById(listId);
+    var errorEl = errorId ? document.getElementById(errorId) : null;
     if (!drop || !input || !list || typeof DataTransfer === 'undefined') return;
 
     var files = new DataTransfer();
@@ -304,9 +311,21 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     function addFiles(fileListToAdd){
-      Array.prototype.forEach.call(fileListToAdd, function(f){ files.items.add(f); });
+      var rejected = [];
+      Array.prototype.forEach.call(fileListToAdd, function(f){
+        if (f.size > MAX_FILE_SIZE) {
+          rejected.push(f.name + ' (' + formatFileSize(f.size) + ')');
+        } else {
+          files.items.add(f);
+        }
+      });
       input.files = files.files;
       render();
+      if (errorEl) {
+        errorEl.textContent = rejected.length
+          ? 'Zu groß, nicht hinzugefügt (max. 10 MB): ' + rejected.join(', ')
+          : '';
+      }
     }
 
     input.addEventListener('change', function(){ addFiles(input.files); });
@@ -320,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function(){
     drop.addEventListener('drop', function(e){ addFiles(e.dataTransfer.files); });
   }
 
-  wireFileUpload('file-drop', 'cf-anhaenge', 'file-list');
+  wireFileUpload('file-drop', 'cf-anhaenge', 'file-list', 'file-upload-error');
 
   /* ---------- Datumsfelder: kein Datum in der Vergangenheit wählbar ---------- */
   function setMinDateOnInputs(scope){

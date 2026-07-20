@@ -1,8 +1,150 @@
 /* ==========================================================================
    PRÄZIS — Website-weites JavaScript
-   Wird von allen Seiten eingebunden. Steuert: mobiles Menü, Newsletter-Formular,
-   Kontaktformular (Demo) und die Einblend-Animation beim Scrollen.
+   Wird von allen Seiten eingebunden. Steuert: mobiles Menü, Newsletter-,
+   Kontakt- und Screening-Formular (inkl. E-Mail-Benachrichtigung) und die
+   Einblend-Animation beim Scrollen.
    ========================================================================== */
+
+/* ==========================================================================
+   E-Mail-Versand (EmailJS)
+   ==========================================================================
+   Kontakt- und Screening-Formular laufen technisch weiter über Netlify Forms
+   (Speicherung, Spam-Schutz, Datei-Uploads). Zusätzlich verschickt EmailJS
+   direkt aus dem Browser zwei E-Mails, ganz ohne eigenen Server:
+     1. Admin-Benachrichtigung an denny.svalina.praezis@gmail.com — Absender
+        "BotWebsite", eigener Betreff, alle Formulardaten übersichtlich gelistet.
+        Vorlage: emailjs-template-admin.html
+     2. Automatische Empfangsbestätigung an den Absender selbst ("Auto-Reply").
+        Vorlage: emailjs-template-guide.html
+
+   Public Key & Service ID sind bereits eingetragen. Es fehlt nur noch die
+   Template ID der Admin-Benachrichtigung (siehe EMAILJS_ADMIN_TEMPLATE_ID
+   unten) — die Auto-Reply-Template-ID ist schon gesetzt. */
+var EMAILJS_PUBLIC_KEY  = 'T5GDR_4iuw9vd0aan';
+var EMAILJS_SERVICE_ID  = 'service_isqveb7';
+var EMAILJS_ADMIN_TEMPLATE_ID    = 'DEIN_ADMIN_TEMPLATE_ID';
+var EMAILJS_CUSTOMER_TEMPLATE_ID = 'template_kouwfuo';
+var EMAILJS_READY = EMAILJS_PUBLIC_KEY.indexOf('DEIN_') !== 0;
+var EMAILJS_ADMIN_READY    = EMAILJS_READY && EMAILJS_ADMIN_TEMPLATE_ID.indexOf('DEIN_') !== 0;
+var EMAILJS_CUSTOMER_READY = EMAILJS_READY && EMAILJS_CUSTOMER_TEMPLATE_ID.indexOf('DEIN_') !== 0;
+
+if (EMAILJS_READY) {
+  var emailjsScript = document.createElement('script');
+  emailjsScript.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+  emailjsScript.onload = function(){
+    if (window.emailjs) { window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+  };
+  document.head.appendChild(emailjsScript);
+}
+
+/* Ermittelt die sichtbare Beschriftung eines Feldes (Label, aria-label oder Feldname). */
+function getFieldLabel(el){
+  if (el.id) {
+    var lbl = document.querySelector('label[for="' + el.id + '"]');
+    if (lbl) return lbl.textContent.trim();
+  }
+  var parentLabel = el.closest('label');
+  if (parentLabel) return parentLabel.textContent.trim();
+  if (el.getAttribute('aria-label')) return el.getAttribute('aria-label');
+  return el.name;
+}
+
+/* Baut aus einem Formular eine übersichtliche, nach Abschnitten gegliederte
+   Text-Zusammenfassung aller ausgefüllten Felder — für den E-Mail-Inhalt. */
+function buildEmailSummary(form){
+  var lines = [];
+  var nodes = form.querySelectorAll('.form-field, .slot-row, .form-step-title, .form-section-title');
+
+  nodes.forEach(function(node){
+    if (node.classList.contains('form-step-title') || node.classList.contains('form-section-title')) {
+      lines.push('');
+      lines.push('— ' + node.textContent.trim().toUpperCase() + ' —');
+      return;
+    }
+
+    var directLabel = node.querySelector(':scope > label');
+    var heading = (directLabel && !directLabel.classList.contains('checkbox-chip')) ? directLabel.textContent.trim() : null;
+    var values = [];
+
+    node.querySelectorAll('.checkbox-chip input[type="checkbox"]').forEach(function(cb){
+      if (!cb.checked) return;
+      var chip = cb.closest('.checkbox-chip');
+      values.push(chip ? chip.textContent.trim() : cb.value);
+    });
+
+    node.querySelectorAll('input, select, textarea').forEach(function(el){
+      if (el.type === 'checkbox' || el.type === 'hidden' || el.type === 'file') return;
+      if (!el.value) return;
+      var lbl = getFieldLabel(el);
+      if (el.tagName === 'SELECT') {
+        values.push(lbl + ': ' + el.options[el.selectedIndex].text);
+      } else if (lbl && lbl !== heading) {
+        values.push(lbl + ': ' + el.value);
+      } else {
+        values.push(el.value);
+      }
+    });
+
+    var fileInput = node.querySelector('input[type="file"]');
+    if (fileInput && fileInput.files && fileInput.files.length) {
+      var names = [];
+      Array.prototype.forEach.call(fileInput.files, function(f){ names.push(f.name); });
+      values.push('Angehängte Dateien (Download im Netlify-Formular-Dashboard): ' + names.join(', '));
+    }
+
+    if (!values.length) return;
+    if (heading) lines.push(heading + ':');
+    values.forEach(function(v){ lines.push('  • ' + v); });
+  });
+
+  return lines.join('\n').trim();
+}
+
+/* Verschickt Admin-Benachrichtigung + Kunden-Auto-Reply per EmailJS.
+   Bricht pro Mail still ab, solange die jeweilige Template ID noch nicht
+   eingetragen ist (siehe Kommentar oben) — die andere Mail wird trotzdem
+   verschickt, sobald sie bereit ist. */
+function sendEmailNotification(form, subject, formLabel){
+  if (typeof emailjs === 'undefined') return;
+
+  var emailField = form.querySelector('input[type="email"]');
+  var nameField = form.querySelector('input[name="name"]');
+  var customerEmail = emailField && emailField.value ? emailField.value : '';
+  var customerName = nameField && nameField.value ? nameField.value : 'dort';
+  var now = new Date().toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' });
+  var summary = buildEmailSummary(form) || '(Keine weiteren Angaben)';
+
+  if (EMAILJS_ADMIN_READY) {
+    var adminHeader = 'Formular: ' + formLabel
+      + '\nEingegangen: ' + now
+      + '\nName: ' + (customerName !== 'dort' ? customerName : '–')
+      + '\nE-Mail: ' + (customerEmail || '–');
+    var adminParams = {
+      to_email: 'denny.svalina.praezis@gmail.com',
+      from_name: 'BotWebsite',
+      reply_to: customerEmail,
+      subject: subject,
+      message: adminHeader + '\n\n' + summary
+    };
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE_ID, adminParams).catch(function(err){
+      console.warn('Admin-Benachrichtigung (EmailJS) fehlgeschlagen:', err);
+    });
+  }
+
+  if (EMAILJS_CUSTOMER_READY && customerEmail) {
+    var customerParams = {
+      to_email: customerEmail,
+      from_name: 'PRÄZIS',
+      reply_to: 'denny.svalina.praezis@gmail.com',
+      subject: 'Danke für Ihre Nachricht — PRÄZIS',
+      absender_name: customerName,
+      message: summary
+    };
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE_ID, customerParams).catch(function(err){
+      console.warn('Auto-Reply (EmailJS) fehlgeschlagen:', err);
+    });
+  }
+}
 
 document.addEventListener('DOMContentLoaded', function(){
 
@@ -76,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function(){
     return pairs.join('&');
   }
 
-  function wireNetlifyForm(formId, statusId, successMessage){
+  function wireNetlifyForm(formId, statusId, successMessage, emailSubject, formLabel){
     var form = document.getElementById(formId);
     if (!form) return;
     form.addEventListener('submit', function(e){
@@ -89,6 +231,9 @@ document.addEventListener('DOMContentLoaded', function(){
       var fetchOptions = hasFile
         ? { method: 'POST', body: new FormData(form) }
         : { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: encodeFormData(form) };
+      /* E-Mail-Benachrichtigung wird parallel losgeschickt — unabhängig von
+         Netlify Forms, damit sie auch dann ankommt, wenn dort mal was hakt. */
+      if (emailSubject) { sendEmailNotification(form, emailSubject, formLabel || formId); }
       fetch('/', fetchOptions).then(function(){
         status.textContent = successMessage;
         form.reset();
@@ -101,8 +246,8 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   wireNetlifyForm('newsletter-form', 'newsletter-status', 'Danke — Sie erhalten künftig Updates zu neuen Projekten.');
-  wireNetlifyForm('contact-form', 'contact-form-status', 'Danke für Ihre Nachricht — wir melden uns innerhalb eines Werktags.');
-  wireNetlifyForm('screening-form', 'screening-form-status', 'Danke für Ihr ausführliches Screening — wir melden uns innerhalb eines Werktags schriftlich.');
+  wireNetlifyForm('contact-form', 'contact-form-status', 'Danke für Ihre Nachricht — wir melden uns innerhalb eines Werktags.', '!!!!! Neue Nachricht Kontaktformular !!!!!', 'Kontaktformular');
+  wireNetlifyForm('screening-form', 'screening-form-status', 'Danke für Ihr ausführliches Screening — wir melden uns innerhalb eines Werktags schriftlich.', '!!!!! Neue Nachricht Screening-Formular !!!!!', 'Screening-Formular');
 
   /* ---------- Kontaktformular: weiteren Terminvorschlag hinzufügen ---------- */
   var addSlotBtn = document.getElementById('add-slot');

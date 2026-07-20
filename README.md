@@ -50,8 +50,8 @@ Automatisches Deployment über Netlify bei jedem Push. Konfiguration: [`netlify.
 
 | | |
 |---|---|
-| **Rocco Svalina** | CEO — Operations & Deals |
-| **Denny Svalina** | CTO — Code & Systems |
+| **Rocco Svalina** | Chief Handshake Officer — Operations & Deals |
+| **Denny Svalina** | Chief Bug Whisperer — Code & Systems |
 
 ---
 

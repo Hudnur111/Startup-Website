@@ -21,9 +21,9 @@
    Template ID der Admin-Benachrichtigung (siehe EMAILJS_ADMIN_TEMPLATE_ID
    unten) — die Auto-Reply-Template-ID ist schon gesetzt. */
 var EMAILJS_PUBLIC_KEY  = 'T5GDR_4iuw9vd0aan';
-var EMAILJS_SERVICE_ID  = 'service_isqveb7';
+var EMAILJS_SERVICE_ID  = 'service_isgveb7';
 var EMAILJS_ADMIN_TEMPLATE_ID    = 'template_99jioko';
-var EMAILJS_CUSTOMER_TEMPLATE_ID = 'template_kouwfuo';
+var EMAILJS_CUSTOMER_TEMPLATE_ID = 'template_k61jn3l';
 var EMAILJS_READY = EMAILJS_PUBLIC_KEY.indexOf('DEIN_') !== 0;
 var EMAILJS_ADMIN_READY    = EMAILJS_READY && EMAILJS_ADMIN_TEMPLATE_ID.indexOf('DEIN_') !== 0;
 var EMAILJS_CUSTOMER_READY = EMAILJS_READY && EMAILJS_CUSTOMER_TEMPLATE_ID.indexOf('DEIN_') !== 0;

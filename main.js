@@ -1,9 +1,92 @@
 /* ==========================================================================
    PRÄZIS — Website-weites JavaScript
-   Wird von allen Seiten eingebunden. Steuert: mobiles Menü, Newsletter-,
-   Kontakt- und Screening-Formular (inkl. E-Mail-Benachrichtigung) und die
-   Einblend-Animation beim Scrollen.
+   Wird von allen Seiten eingebunden. Steuert: mobiles Menü, Farbschema-Umschalter,
+   Newsletter-, Kontakt- und Screening-Formular (inkl. E-Mail-Benachrichtigung,
+   Formular-Autospeicherung) und die Einblend-Animation beim Scrollen.
    ========================================================================== */
+
+/* ==========================================================================
+   Farbschema (Hell/Dunkel)
+   ==========================================================================
+   Folgt standardmäßig der Systemeinstellung (siehe CSS @media prefers-color-scheme).
+   Über den Umschalter im Header kann das manuell überschrieben werden — die Wahl
+   wird in localStorage gemerkt. Ein kleines Inline-Script im <head> jeder Seite
+   wendet eine gespeicherte Wahl schon vor dem ersten Rendern an, damit die Seite
+   nicht kurz im falschen Farbschema aufblitzt. */
+(function(){
+  var STORAGE_KEY = 'praezis-theme';
+  var root = document.documentElement;
+  var mql = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function systemTheme(){ return mql.matches ? 'dark' : 'light'; }
+  function currentTheme(){ return root.getAttribute('data-theme') || systemTheme(); }
+
+  function updateButtons(){
+    var isDark = currentTheme() === 'dark';
+    document.querySelectorAll('.theme-toggle').forEach(function(btn){
+      btn.classList.toggle('is-dark', isDark);
+      btn.setAttribute('aria-label', isDark ? 'Helles Farbschema aktivieren' : 'Dunkles Farbschema aktivieren');
+    });
+  }
+
+  document.querySelectorAll('.theme-toggle').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem(STORAGE_KEY, next); } catch(e){}
+      updateButtons();
+    });
+  });
+
+  if (mql.addEventListener) {
+    mql.addEventListener('change', function(){
+      var saved;
+      try { saved = localStorage.getItem(STORAGE_KEY); } catch(e){}
+      if (!saved) { updateButtons(); }
+    });
+  }
+
+  updateButtons();
+})();
+
+/* ==========================================================================
+   Cookie-Hinweis
+   ==========================================================================
+   Diese Website setzt keine Tracking- oder Marketing-Cookies. Die einzige
+   Speicherung im Browser ist technisch notwendige localStorage (Farbschema-Wahl,
+   Formular-Entwürfe) — siehe Datenschutzerklärung. Der Hinweis informiert einmalig
+   darüber; über den Footer-Link "Cookie-Einstellungen" lässt er sich jederzeit
+   erneut aufrufen. */
+(function(){
+  var STORAGE_KEY = 'praezis-cookie-notice-seen';
+
+  function showBanner(){
+    if (document.querySelector('.cookie-banner')) return;
+    var banner = document.createElement('div');
+    banner.className = 'cookie-banner';
+    banner.setAttribute('role', 'region');
+    banner.setAttribute('aria-label', 'Cookie-Hinweis');
+    banner.innerHTML =
+      '<p>Diese Website verwendet ausschließlich technisch notwendige lokale Speicherung im Browser (Farbschema, Formular-Entwürfe) — keine Tracking- oder Marketing-Cookies. Mehr dazu in der <a href="datenschutz.html">Datenschutzerklärung</a>.</p>' +
+      '<div class="cookie-banner-actions"><button type="button" class="btn btn-primary" id="cookie-banner-ok">Verstanden</button></div>';
+    document.body.appendChild(banner);
+    document.getElementById('cookie-banner-ok').addEventListener('click', function(){
+      try { localStorage.setItem(STORAGE_KEY, '1'); } catch(e){}
+      banner.remove();
+    });
+  }
+
+  var seen;
+  try { seen = localStorage.getItem(STORAGE_KEY); } catch(e){}
+  if (!seen) { showBanner(); }
+
+  document.querySelectorAll('.cookie-settings-link').forEach(function(link){
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      showBanner();
+    });
+  });
+})();
 
 /* ==========================================================================
    E-Mail-Versand (EmailJS)
@@ -243,6 +326,7 @@ document.addEventListener('DOMContentLoaded', function(){
         if (fileList) { fileList.innerHTML = ''; }
         var uploadError = document.getElementById('file-upload-error');
         if (uploadError) { uploadError.textContent = ''; }
+        if (form.__clearDraft) { form.__clearDraft(); }
       }).catch(function(){
         status.textContent = 'Danke! Der Versand klappt erst nach dem Netlify-Deploy — lokal kann das Formular nicht senden.';
       });
@@ -252,6 +336,92 @@ document.addEventListener('DOMContentLoaded', function(){
   wireNetlifyForm('newsletter-form', 'newsletter-status', 'Danke — Sie erhalten künftig Updates zu neuen Projekten.');
   wireNetlifyForm('contact-form', 'contact-form-status', 'Danke für Ihre Nachricht — wir melden uns innerhalb eines Werktags.', '!!!!! Neue Nachricht Kontaktformular !!!!!', 'Kontaktformular');
   wireNetlifyForm('screening-form', 'screening-form-status', 'Danke für Ihr ausführliches Screening — wir melden uns innerhalb eines Werktags schriftlich.', '!!!!! Neue Nachricht Screening-Formular !!!!!', 'Screening-Formular');
+
+  /* ---------- Formular-Autospeicherung (Entwurf) ----------
+     Lange Formulare (v. a. das 8-teilige Screening) gehen bei versehentlich
+     geschlossenem Tab oder Browser-Absturz sonst komplett verloren. Eingaben
+     werden daher fortlaufend in localStorage gesichert und beim erneuten
+     Öffnen der Seite automatisch wiederhergestellt — bis zum erfolgreichen
+     Absenden oder manuellen Verwerfen. Datei-Anhänge lassen sich technisch
+     nicht in localStorage speichern und bleiben daher außen vor. */
+  function serializeFormDraft(form){
+    var data = {};
+    Array.prototype.forEach.call(form.elements, function(el){
+      if (!el.name || el.type === 'hidden' || el.type === 'file' || el.type === 'submit') return;
+      data[el.name] = el.type === 'checkbox' ? el.checked : el.value;
+    });
+    return data;
+  }
+
+  function applyFormDraft(form, data){
+    Object.keys(data).forEach(function(name){
+      var el = form.elements[name];
+      if (!el || el.length) { return; } // el.length: RadioNodeList (mehrere gleichnamige Felder) wird hier nicht unterstützt
+      if (el.type === 'checkbox') { el.checked = !!data[name]; }
+      else { el.value = data[name]; }
+    });
+  }
+
+  function hasMeaningfulDraft(data){
+    return Object.keys(data).some(function(k){
+      var v = data[k];
+      return v === true || (typeof v === 'string' && v.trim() !== '');
+    });
+  }
+
+  function wireFormDraft(formId){
+    var form = document.getElementById(formId);
+    if (!form) return;
+    var key = 'praezis-draft-' + formId;
+
+    function clearDraft(){
+      try { localStorage.removeItem(key); } catch(e){}
+      var banner = form.querySelector('.draft-banner');
+      if (banner) { banner.remove(); }
+    }
+    form.__clearDraft = clearDraft;
+
+    var saved;
+    try { saved = localStorage.getItem(key); } catch(e){}
+    if (saved) {
+      var parsed = null;
+      try { parsed = JSON.parse(saved); } catch(e){}
+      if (parsed && parsed.fields && hasMeaningfulDraft(parsed.fields)) {
+        applyFormDraft(form, parsed.fields);
+        var timeStr = new Date(parsed.savedAt).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' });
+        var banner = document.createElement('div');
+        banner.className = 'draft-banner';
+        var label = document.createElement('span');
+        label.textContent = 'Entwurf vom ' + timeStr + ' automatisch wiederhergestellt.';
+        var discardBtn = document.createElement('button');
+        discardBtn.type = 'button';
+        discardBtn.className = 'draft-banner-discard';
+        discardBtn.textContent = 'Entwurf verwerfen';
+        discardBtn.addEventListener('click', function(){
+          form.reset();
+          clearDraft();
+        });
+        banner.appendChild(label);
+        banner.appendChild(discardBtn);
+        form.insertBefore(banner, form.firstChild);
+      } else {
+        clearDraft();
+      }
+    }
+
+    var saveTimeout;
+    form.addEventListener('input', function(){
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(function(){
+        var fields = serializeFormDraft(form);
+        if (!hasMeaningfulDraft(fields)) { clearDraft(); return; }
+        try { localStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), fields: fields })); } catch(e){}
+      }, 600);
+    });
+  }
+
+  wireFormDraft('contact-form');
+  wireFormDraft('screening-form');
 
   /* ---------- Kontaktformular: weiteren Terminvorschlag hinzufügen ---------- */
   var addSlotBtn = document.getElementById('add-slot');

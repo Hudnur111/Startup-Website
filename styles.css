@@ -26,9 +26,12 @@
   --danger:#B3261E;
   --shadow: 0 1px 2px rgba(20,32,58,0.06), 0 12px 32px -16px rgba(20,32,58,0.18);
   --radius: 3px;
-  --serif: "Iowan Old Style","Palatino Linotype","Book Antiqua",Georgia,"Times New Roman",serif;
-  --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  --mono: "SF Mono","Cascadia Code",Consolas,"Liberation Mono",monospace;
+  /* Nur 2 Schriftfamilien auf der ganzen Website: Geist (Sans) für Überschriften &
+     Fließtext, Geist Mono für Labels/Zahlen/Akzente. Eingebunden über Google Fonts
+     (siehe <head> jeder Seite). Systemschriften greifen nur als Fallback. */
+  --serif: "Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --sans: "Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono: "Geist Mono","SF Mono","Cascadia Code",Consolas,"Liberation Mono",monospace;
   --ease: cubic-bezier(.22,1,.36,1);
 }
 @media (prefers-color-scheme: dark){
@@ -148,6 +151,17 @@ header.site{
   text-decoration:none; white-space:nowrap; transition:border-color .15s, color .15s, transform .15s;
 }
 .nav-cta:hover{border-color:var(--brass); color:var(--brass); transform:translateY(-1px);}
+.theme-toggle{
+  display:inline-flex; align-items:center; justify-content:center; flex:none;
+  width:36px; height:36px; border-radius:50%; border:1px solid var(--line-strong);
+  background:none; color:var(--ink-soft); cursor:pointer;
+  transition:border-color .15s, color .15s, background .15s;
+}
+.theme-toggle:hover{ border-color:var(--brass); color:var(--brass); }
+.theme-toggle svg{width:17px; height:17px;}
+.theme-toggle .theme-icon-sun{ display:none; }
+.theme-toggle.is-dark .theme-icon-sun{ display:block; }
+.theme-toggle.is-dark .theme-icon-moon{ display:none; }
 .nav-toggle{
   display:none; background:none; border:1px solid var(--line-strong); border-radius:var(--radius);
   width:44px; height:44px; align-items:center; justify-content:center; cursor:pointer; flex:none;
@@ -206,8 +220,8 @@ header.site{
 }
 .btn-primary{background:var(--brass); color:#1B1204; box-shadow:var(--shadow);}
 .btn-primary:hover{transform:translateY(-2px); box-shadow:0 4px 14px -4px color-mix(in srgb, var(--brass) 60%, transparent);}
-.btn-ghost{border:1px solid var(--line-strong); color:var(--ink);}
-.btn-ghost:hover{border-color:var(--brass); color:var(--brass); transform:translateY(-2px);}
+.btn-outline{border:1px solid var(--line-strong); color:var(--ink);}
+.btn-outline:hover{border-color:var(--brass); color:var(--brass); transform:translateY(-2px);}
 
 .hero-plate{
   background:var(--surface); border:1px solid var(--line); border-radius:6px;
@@ -250,6 +264,7 @@ section{padding:76px 0;}
 @media (max-width:520px){ .feat-list{grid-template-columns:1fr;} }
 .feat{padding:0 18px 0 0; border-right:1px solid var(--line);}
 .feat:last-child{border-right:none;}
+.feat:nth-child(5n){border-right:none;} /* Ende jeder 5er-Reihe — sonst reißt der Trenner bei mehr als 5 Einträgen quer durchs Grid */
 @media (max-width:960px){ .feat{padding:26px 20px; border-right:none;} }
 .feat svg{width:30px; height:30px; color:var(--brass); transition:transform .25s var(--ease);}
 .feat:hover svg{transform:translateY(-3px) scale(1.06);}
@@ -318,6 +333,17 @@ section{padding:76px 0;}
 
 /* Kontaktformular */
 .contact-form{display:flex; flex-direction:column; gap:16px; margin-top:28px;}
+.draft-banner{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  background:color-mix(in srgb, var(--brass) 10%, var(--surface));
+  border:1px solid var(--brass); border-radius:8px; padding:12px 16px; font-size:13.5px;
+}
+.draft-banner span{ flex:1; }
+.draft-banner-discard{
+  font-family:var(--mono); font-size:12px; color:var(--ink-faint); background:none; border:none;
+  text-decoration:underline; cursor:pointer; padding:0; white-space:nowrap;
+}
+.draft-banner-discard:hover{ color:var(--brass); }
 .form-field{display:flex; flex-direction:column; gap:6px;}
 .form-field label{font-family:var(--mono); font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-faint);}
 .form-field input, .form-field textarea{
@@ -466,16 +492,20 @@ a.choice-card:hover{transform:translateY(-3px); border-color:var(--brass); box-s
 :root[data-theme="dark"] .cta-band p{color:var(--ink-soft);}
 @media (max-width:640px){ .cta-band{padding:36px 26px; flex-direction:column; align-items:flex-start;} }
 
-/* ---------- 14. Footer ---------- */
-footer{border-top:1px solid var(--line); padding:56px 0 40px;}
+/* ---------- 14. Footer ----------
+   Heller/dunklerer Hintergrund als der Seiteninhalt (--surface-2) grenzt den Footer
+   sichtbar ab. Text läuft durchgehend auf --ink-soft statt --ink-faint, weil Letzteres
+   im hellen Farbschema den WCAG-AA-Kontrast (4.5:1) für Fließtext verfehlt (~3.3:1) —
+   das machte den Footer schwer lesbar. */
+footer{border-top:1px solid var(--line); padding:56px 0 40px; background:var(--surface-2);}
 .foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1.3fr; gap:40px;}
 @media (max-width:760px){ .foot-grid{grid-template-columns:1fr 1fr; row-gap:36px;} }
 @media (max-width:480px){ .foot-grid{grid-template-columns:1fr;} }
-.foot-col h4{font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:14px; font-weight:600;}
+.foot-col h4{font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:14px; font-weight:600;}
 .foot-col ul{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px;}
 .foot-col a{font-size:14px; color:var(--ink-soft); text-decoration:none; transition:color .15s;}
 .foot-col a:hover{color:var(--brass);}
-.newsletter{display:flex; gap:0; margin-top:6px; border:1px solid var(--line-strong); border-radius:var(--radius); overflow:hidden;}
+.newsletter{display:flex; gap:0; margin-top:6px; border:1px solid var(--line-strong); border-radius:var(--radius); overflow:hidden; background:var(--surface);}
 .newsletter input{
   flex:1; min-width:0; border:none; background:transparent; padding:12px 14px; font-size:14px; color:var(--ink);
   font-family:var(--sans); outline:none;
@@ -485,16 +515,29 @@ footer{border-top:1px solid var(--line); padding:56px 0 40px;}
   padding:0 18px; cursor:pointer; font-family:var(--sans); transition:background .15s;
 }
 .newsletter button:hover{background:var(--brass-bright);}
-.foot-note{font-size:12.5px; color:var(--ink-faint); margin-top:8px;}
+.foot-note{font-size:12.5px; color:var(--ink-soft); margin-top:8px;}
 .foot-bottom{
   margin-top:48px; padding-top:24px; border-top:1px solid var(--line);
   display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
-  font-size:12.5px; color:var(--ink-faint); font-family:var(--mono);
+  font-size:12.5px; color:var(--ink-soft); font-family:var(--mono);
 }
 .foot-bottom .legal-links{display:flex; gap:16px;}
-.foot-bottom .legal-links a{color:var(--ink-faint); text-decoration:none;}
+.foot-bottom .legal-links a{color:var(--ink-soft); text-decoration:none;}
 .foot-bottom .legal-links a:hover{color:var(--brass);}
 #newsletter-status{font-size:12.5px; color:var(--brass); margin-top:8px; min-height:1em;}
+
+/* ---------- Cookie-Hinweis ---------- */
+.cookie-banner{
+  position:fixed; left:0; right:0; bottom:0; z-index:80;
+  display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+  background:var(--surface); border-top:1px solid var(--line-strong);
+  padding:18px 24px; box-shadow:0 -12px 32px -16px rgba(20,32,58,0.25);
+}
+.cookie-banner p{flex:1; min-width:240px; font-size:13.5px; color:var(--ink-soft); margin:0;}
+.cookie-banner a{color:var(--brass);}
+.cookie-banner-actions{display:flex; gap:10px; flex:none;}
+.cookie-banner .btn{padding:10px 20px; font-size:13.5px;}
+@media (max-width:560px){ .cookie-banner{padding:16px 18px;} .cookie-banner-actions{width:100%;} .cookie-banner .btn{flex:1;} }
 
 /* ---------- 15. Rechtliche Seiten (Impressum / Datenschutz) ---------- */
 .legal-content{max-width:760px;}

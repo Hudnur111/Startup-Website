@@ -61,9 +61,16 @@
    Bewusst KEIN "Alle akzeptieren / Ablehnen"-Pärchen: Es gibt keine optionalen
    Cookies, über die man abstimmen könnte — beide Buttons würden exakt dasselbe
    tun. Das vorzutäuschen wäre irreführend. Stattdessen zeigt "Details" ehrlich,
-   was aktuell im Browser gespeichert ist, mit echter Löschfunktion. */
+   was aktuell im Browser gespeichert ist, mit echter Löschfunktion.
+
+   sessionStorage statt localStorage: Der Hinweis soll bei jedem neuen Besuch
+   (neuer Tab / neu geöffnete Seite) wieder erscheinen, aber nicht bei jedem
+   internen Klick von Seite zu Seite innerhalb desselben Besuchs nerven. */
 (function(){
   var SEEN_KEY = 'praezis-cookie-notice-seen';
+
+  function getSeen(){ try { return sessionStorage.getItem(SEEN_KEY); } catch(e){ return null; } }
+  function setSeen(){ try { sessionStorage.setItem(SEEN_KEY, '1'); } catch(e){} }
 
   function describeStorage(){
     var theme;
@@ -146,14 +153,12 @@
     });
 
     document.getElementById('cookie-banner-ok').addEventListener('click', function(){
-      try { localStorage.setItem(SEEN_KEY, '1'); } catch(e){}
+      setSeen();
       banner.remove();
     });
   }
 
-  var seen;
-  try { seen = localStorage.getItem(SEEN_KEY); } catch(e){}
-  if (!seen) { showBanner(); }
+  if (!getSeen()) { showBanner(); }
 
   document.querySelectorAll('.cookie-settings-link').forEach(function(link){
     link.addEventListener('click', function(e){
@@ -616,6 +621,36 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   } else {
     revealEls.forEach(function(el){ el.classList.add('is-visible'); });
+  }
+
+  /* ---------- Kennzahlen: Hochzähl-Animation (anime.js) ----------
+     Zahlen zählen erst hoch, wenn die Kennzahlen-Sektion in den sichtbaren
+     Bereich scrollt — läuft nur einmal pro Seitenaufruf. */
+  var countEls = document.querySelectorAll('[data-count]');
+  if (typeof anime !== 'undefined' && countEls.length && 'IntersectionObserver' in window) {
+    var countObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        var target = parseFloat(el.getAttribute('data-count'));
+        var decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+        var prefix = el.getAttribute('data-prefix') || '';
+        var suffix = el.getAttribute('data-suffix') || '';
+        var obj = { val: 0 };
+        anime({
+          targets: obj,
+          val: target,
+          duration: 1400,
+          easing: 'easeOutExpo',
+          round: decimals ? Math.pow(10, decimals) : 1,
+          update: function(){
+            el.textContent = prefix + obj.val.toFixed(decimals) + suffix;
+          }
+        });
+        countObserver.unobserve(el);
+      });
+    }, { threshold: 0.4 });
+    countEls.forEach(function(el){ countObserver.observe(el); });
   }
 
 });

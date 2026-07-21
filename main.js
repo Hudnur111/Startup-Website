@@ -56,9 +56,49 @@
    Speicherung im Browser ist technisch notwendige localStorage (Farbschema-Wahl,
    Formular-Entwürfe) — siehe Datenschutzerklärung. Der Hinweis informiert einmalig
    darüber; über den Footer-Link "Cookie-Einstellungen" lässt er sich jederzeit
-   erneut aufrufen. */
+   erneut aufrufen.
+
+   Bewusst KEIN "Alle akzeptieren / Ablehnen"-Pärchen: Es gibt keine optionalen
+   Cookies, über die man abstimmen könnte — beide Buttons würden exakt dasselbe
+   tun. Das vorzutäuschen wäre irreführend. Stattdessen zeigt "Details" ehrlich,
+   was aktuell im Browser gespeichert ist, mit echter Löschfunktion. */
 (function(){
-  var STORAGE_KEY = 'praezis-cookie-notice-seen';
+  var SEEN_KEY = 'praezis-cookie-notice-seen';
+
+  function describeStorage(){
+    var theme;
+    try { theme = localStorage.getItem('praezis-theme'); } catch(e){}
+    var themeLabel = theme === 'dark' ? 'Dunkel (manuell gewählt)' : theme === 'light' ? 'Hell (manuell gewählt)' : 'Folgt Systemeinstellung';
+    var hasContactDraft = false, hasScreeningDraft = false;
+    try { hasContactDraft = !!localStorage.getItem('praezis-draft-contact-form'); } catch(e){}
+    try { hasScreeningDraft = !!localStorage.getItem('praezis-draft-screening-form'); } catch(e){}
+    return [
+      { label: 'Farbschema', value: themeLabel },
+      { label: 'Kontaktformular-Entwurf', value: hasContactDraft ? 'Vorhanden' : 'Keiner gespeichert' },
+      { label: 'Screening-Formular-Entwurf', value: hasScreeningDraft ? 'Vorhanden' : 'Keiner gespeichert' }
+    ];
+  }
+
+  function renderDetails(panel){
+    var rows = describeStorage();
+    panel.innerHTML = '<div class="cookie-details-list">' + rows.map(function(r){
+      return '<div class="cookie-details-row"><span>' + r.label + '</span><strong>' + r.value + '</strong></div>';
+    }).join('') + '</div>' +
+      '<button type="button" class="cookie-details-clear" id="cookie-clear-all">Gespeicherte Daten jetzt löschen</button>';
+    document.getElementById('cookie-clear-all').addEventListener('click', function(){
+      try {
+        localStorage.removeItem('praezis-theme');
+        localStorage.removeItem('praezis-draft-contact-form');
+        localStorage.removeItem('praezis-draft-screening-form');
+      } catch(e){}
+      document.documentElement.removeAttribute('data-theme');
+      var contactForm = document.getElementById('contact-form');
+      var screeningForm = document.getElementById('screening-form');
+      if (contactForm && contactForm.__clearDraft) { contactForm.__clearDraft(); }
+      if (screeningForm && screeningForm.__clearDraft) { screeningForm.__clearDraft(); }
+      renderDetails(panel);
+    });
+  }
 
   function showBanner(){
     if (document.querySelector('.cookie-banner')) return;
@@ -67,23 +107,60 @@
     banner.setAttribute('role', 'region');
     banner.setAttribute('aria-label', 'Cookie-Hinweis');
     banner.innerHTML =
-      '<p>Diese Website verwendet ausschließlich technisch notwendige lokale Speicherung im Browser (Farbschema, Formular-Entwürfe) — keine Tracking- oder Marketing-Cookies. Mehr dazu in der <a href="datenschutz.html">Datenschutzerklärung</a>.</p>' +
-      '<div class="cookie-banner-actions"><button type="button" class="btn btn-primary" id="cookie-banner-ok">Verstanden</button></div>';
+      '<div class="cookie-banner-main">' +
+        '<div class="cookie-banner-icon" aria-hidden="true">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' +
+            '<path d="M12 2a10 10 0 1 0 9.54 13.05 4 4 0 0 1-4.9-4.9A4 4 0 0 1 12 5.5c0-1.1.4-2.1 1.05-2.87A9.96 9.96 0 0 0 12 2Z"/>' +
+            '<circle cx="8.7" cy="10.8" r=".6" fill="currentColor" stroke="none"/>' +
+            '<circle cx="11.5" cy="15.2" r=".6" fill="currentColor" stroke="none"/>' +
+            '<circle cx="15.2" cy="9.6" r=".6" fill="currentColor" stroke="none"/>' +
+          '</svg>' +
+        '</div>' +
+        '<div class="cookie-banner-body">' +
+          '<p class="cookie-banner-title">Datenschutz-Hinweis</p>' +
+          '<p class="cookie-banner-text">Diese Website verwendet ausschließlich technisch notwendige lokale Speicherung im Browser (Farbschema, Formular-Entwürfe) — keine Tracking- oder Marketing-Cookies. <a href="datenschutz.html">Mehr erfahren</a></p>' +
+        '</div>' +
+        '<div class="cookie-banner-actions">' +
+          '<button type="button" class="btn btn-outline cookie-banner-details-toggle" id="cookie-banner-details" aria-expanded="false">' +
+            '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>' +
+            'Details' +
+          '</button>' +
+          '<button type="button" class="btn btn-primary" id="cookie-banner-ok">Verstanden</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cookie-banner-details" id="cookie-banner-details-panel" hidden></div>';
     document.body.appendChild(banner);
+
+    var detailsBtn = document.getElementById('cookie-banner-details');
+    var detailsPanel = document.getElementById('cookie-banner-details-panel');
+    detailsBtn.addEventListener('click', function(){
+      var isOpen = !detailsPanel.hasAttribute('hidden');
+      if (isOpen) {
+        detailsPanel.setAttribute('hidden', '');
+        detailsBtn.setAttribute('aria-expanded', 'false');
+      } else {
+        renderDetails(detailsPanel);
+        detailsPanel.removeAttribute('hidden');
+        detailsBtn.setAttribute('aria-expanded', 'true');
+      }
+    });
+
     document.getElementById('cookie-banner-ok').addEventListener('click', function(){
-      try { localStorage.setItem(STORAGE_KEY, '1'); } catch(e){}
+      try { localStorage.setItem(SEEN_KEY, '1'); } catch(e){}
       banner.remove();
     });
   }
 
   var seen;
-  try { seen = localStorage.getItem(STORAGE_KEY); } catch(e){}
+  try { seen = localStorage.getItem(SEEN_KEY); } catch(e){}
   if (!seen) { showBanner(); }
 
   document.querySelectorAll('.cookie-settings-link').forEach(function(link){
     link.addEventListener('click', function(e){
       e.preventDefault();
       showBanner();
+      var btn = document.getElementById('cookie-banner-details');
+      if (btn) { btn.click(); }
     });
   });
 })();
